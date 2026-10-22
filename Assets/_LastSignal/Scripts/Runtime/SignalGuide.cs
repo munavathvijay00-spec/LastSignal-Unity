@@ -19,6 +19,7 @@ namespace LastSignal
         private GUIStyle heading, text, hint, marker;
         private Texture2D backdrop;
         private int lastLoop;
+        private SignalDoor tunnelDoor;
 
         void Start()
         {
@@ -29,6 +30,7 @@ namespace LastSignal
             if (!gate) { var o = GameObject.Find("Maintenance gate"); if (o) gate = o.transform; }
             if (!receiver) { var o = GameObject.Find("Hidden transmitter recording"); if (o) receiver = o.transform; }
             lastLoop = world ? world.loopNumber : 1;
+            tunnelDoor = FindFirstObjectByType<SignalDoor>();
             SetTutorialPause(true);
             backdrop = new Texture2D(1, 1);
             backdrop.SetPixel(0, 0, new Color(.015f, .03f, .055f, .94f));
@@ -68,14 +70,16 @@ namespace LastSignal
         {
             if (!world) return "Find the work order near the tunnel.";
             if (!world.Knows("code")) return "STEP 1: Find the GOLD work order beside the road. Aim at it and press E.";
-            if (world.loopNumber == 1) return "STEP 2: Stand on the PURPLE relay plate near the gate for 5 seconds, then press T to rewind.";
-            if (!world.Knows("recording")) return "STEP 3: Your BLUE past self will stand on the relay. Reach the RED gate and press E while it glows.";
+            if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
+            if (world.loopNumber == 1) return "STEP 2: Stand on the PURPLE relay for 5 seconds, then press T. Your Echo replays that route.";
+            if (!world.Knows("recording")) return "STEP 3: Walk to the gate in loop 2. The BLUE Echo charges it for 14 seconds. Aim at the gate and press E.";
             return "STEP 4: Follow the tunnel. Decode the transmitter or reach the escape tower.";
         }
 
         Transform CurrentTarget()
         {
             if (!world || !world.Knows("code")) return clue;
+            if (tunnelDoor != null && tunnelDoor.IsOpen && !world.Knows("recording")) return receiver;
             if (world.loopNumber == 1) return relay;
             if (!world.Knows("recording")) return gate;
             return receiver;
