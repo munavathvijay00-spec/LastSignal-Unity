@@ -4,6 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using LastSignal;
 
 /// <summary>
 /// Non-destructive expansion of the existing Prototype: roads, three explorable
@@ -77,10 +78,16 @@ public static class SignalV6WorldBuilder
         Building(parent,"Storage container",new Vector3(24,0,106),5,3,9,
             new Color(.3f,.28f,.23f),Rust);
         Tower(parent,"Distress radio mast",new Vector3(21,0,75),16);
+        Lore(parent,"Radio log - distress frequency",new Vector3(18,1.25f,87.35f),
+            "frequency", "Recover emergency broadcast",
+            "RADIO LOG: All transmissions at 11:47 carry the same voice. Yours.");
 
         // District 2: checkpoint, barrier, security cabins.
         Building(parent,"Abandoned security cabin",new Vector3(-19,0,115),8,5,6,
             new Color(.24f,.27f,.29f),new Color(.36f,.18f,.14f));
+        Lore(parent,"Checkpoint dispatch note",new Vector3(-20,1.3f,111.9f),
+            "dispatch", "Read the checkpoint dispatch",
+            "DISPATCH: The tunnel was sealed BEFORE the first emergency call. Who knew?");
         for(int i=0;i<4;i++)
             Block(parent,"Checkpoint concrete barricade "+i,
                 new Vector3(-6+i*3.7f,.32f,121),new Vector3(2.7f,1.1f,.7f),
@@ -123,6 +130,16 @@ public static class SignalV6WorldBuilder
         EditorSceneManager.SaveOpenScenes();
         EditorUtility.DisplayDialog("LAST SIGNAL V6",
             "Expanded town created and saved. Explore beyond the tunnel, checkpoint and radio station. Remember: this is blockout art. Inspect the Game view and test ground collisions.", "OK");
+    }
+
+    private static void Lore(Transform p,string name,Vector3 pos,string id,string prompt,string message)
+    {
+        var clue=Block(p,name,pos,new Vector3(1.4f,1.1f,.22f),
+            new Color(.8f,.61f,.3f),true);
+        var component=clue.AddComponent<SignalClue>();
+        component.clueId=id;
+        component.prompt=prompt;
+        component.discoveryText=message;
     }
 
     private static void Road(Transform p,string name,Vector3 pos,Vector3 size)
