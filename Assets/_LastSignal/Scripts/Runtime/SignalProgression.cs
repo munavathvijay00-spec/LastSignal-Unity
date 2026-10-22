@@ -23,13 +23,15 @@ namespace LastSignal
         private GUIStyle title, content;
         private Texture2D panel;
         private Transform relay, gate, recording;
+        private SignalEchoPlate relayComponent;
+        private SignalDoor gateComponent;
 
         void Start()
         {
             if (!world) world = FindFirstObjectByType<SignalWorld>();
             if (!guide) guide = FindFirstObjectByType<SignalGuide>();
-            var a=GameObject.Find("Echo relay plate"); if(a) relay=a.transform;
-            var b=GameObject.Find("Maintenance gate"); if(b) gate=b.transform;
+            var a=GameObject.Find("Echo relay plate"); if(a) {relay=a.transform; relayComponent=a.GetComponent<SignalEchoPlate>();}
+            var b=GameObject.Find("Maintenance gate"); if(b) {gate=b.transform; gateComponent=b.GetComponent<SignalDoor>();}
             var c=GameObject.Find("Hidden transmitter recording"); if(c) recording=c.transform;
         }
 
@@ -50,9 +52,9 @@ namespace LastSignal
             if (!world || world.ended) return;
             if (world.Knows("code")) Award("workorder",50,"FIRST EVIDENCE");
             if (world.loopNumber>1) Award("rewind",50,"FIRST REWIND");
-            if (world.status.Contains("FUTURE ECHO activated"))
+            if (relayComponent != null && relayComponent.EverActivated)
                 Award("relay",75,"ECHO SYNCHRONIZED");
-            if (world.status.Contains("Gate open"))
+            if (gateComponent != null && gateComponent.EverOpened)
                 Award("gate",75,"TEMPORAL GATE CLEARED");
             if (world.Knows("recording"))
             {
