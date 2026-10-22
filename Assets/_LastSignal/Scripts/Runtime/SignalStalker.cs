@@ -21,6 +21,9 @@ namespace LastSignal
         public float catchDistance = 1.65f;
         public float patrolSpeed = 1.1f;
         public float pursuitSpeed = 2.65f;
+        public float searchSeconds = 3f;
+        private float lastSightTime = -100f;
+        private Vector3 lastSeenPosition;
         public Vector3 patrolA = new Vector3(2.8f, 1.0f, 18f);
         public Vector3 patrolB = new Vector3(2.8f, 1.0f, 27f);
 
@@ -52,6 +55,7 @@ namespace LastSignal
                 nextWarning = 0f;
                 distractedUntil = 0f;
                 wasEchoNear = false;
+                lastSightTime = -100f;
             }
 
             if (world.elapsed < activateAfterSeconds)
@@ -63,7 +67,9 @@ namespace LastSignal
 
             Vector3 delta = target.position - transform.position;
             delta.y = 0f;
-            bool chasing = delta.sqrMagnitude < alertDistance * alertDistance && HasClearPath(target.position);
+            bool seesPlayer = delta.sqrMagnitude < alertDistance * alertDistance && HasClearPath(target.position);
+            if (seesPlayer) { lastSightTime = Time.time; lastSeenPosition = target.position; }
+            bool chasing = seesPlayer || Time.time - lastSightTime < searchSeconds;
             Vector3 echoPosition;
             bool echoExists = world.TryGetEchoPosition(out echoPosition);
             Vector3 echoDelta = echoPosition - transform.position;
@@ -79,7 +85,7 @@ namespace LastSignal
             bool distracted = echoExists && Time.time < distractedUntil;
             IsDistracted = distracted;
             Vector3 destination = distracted ? echoPosition :
-                chasing ? target.position : (goingToB ? patrolB : patrolA);
+                chasing ? lastSeenPosition : (goingToB ? patrolB : patrolA);
             destination.y = transform.position.y;
 
             Vector3 direction = destination - transform.position;
@@ -109,7 +115,7 @@ namespace LastSignal
                 world.status = "SOMETHING IS FOLLOWING YOU. RUN OR CHANGE THE TIMELINE.";
             }
 
-            if (chasing && !distracted && delta.sqrMagnitude <= catchDistance * catchDistance)
+            if (seesPlayer && !distracted && delta.sqrMagnitude <= catchDistance * catchDistance)
             {
                 world.ResetLoop();
                 // Loop 2 starts safely; the stalker stays inactive until its next activation time.
