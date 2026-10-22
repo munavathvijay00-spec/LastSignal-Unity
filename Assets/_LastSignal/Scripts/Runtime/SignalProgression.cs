@@ -70,6 +70,7 @@ namespace LastSignal
                     rewardUntil=Time.time+12f;
                 }
             }
+            if (world.Knows("echo_shelter")) Award("shelter",80,"ECHO SHELTER SECURED");
             if (world.Knows("signal_service")) Award("service",35,"SERVICE BROADCAST");
             if (world.Knows("signal_radio")) Award("radio",35,"RADIO BROADCAST");
             if (world.Knows("signal_checkpoint")) Award("checkpoint",35,"CHECKPOINT BROADCAST");
