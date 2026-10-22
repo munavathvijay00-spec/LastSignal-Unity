@@ -175,3 +175,29 @@ V9 creates persistent Unity materials and a low-poly pine mesh as project assets
 **Rollback:** Remove `V9 Art Quality Pass` while not playing, then save. V9 also adjusts fog and camera far clip, so restore your pre-upgrade scene copy for a complete rollback. Generated material and mesh assets can remain safely unused; don't delete in-use assets while the scene is open.
 
 **Design reality:** V9 is a consistent stylized geometric pass, not a ready-made AAA-quality asset package. It improves silhouettes and construction but the high-quality milestone still requires authored textures, lighting iteration, animated characters, sound, and independent playtesting.
+
+
+## V10: Guided First Play + Procedural Sound (critical usability fix)
+Users should not have to guess the rules. V10 adds a pause-on-opening tutorial (Enter to start, H to show it again), contextual instructions and visible objective marker, and 4 generated audio layers: restrained ambient drone, phone alert, rewind sound, and evidence discovery chirp. No sound files, internet assets or paid libraries are required. The install menu also ensures the active player camera has one AudioListener. Existing player movement, V6-V9 world, puzzles, Stalker and evidence remain intact.
+
+### Safe installation
+1. In Unity exit Play mode. Save a **copy** of Prototype.unity as a backup; return to the original. Quit Unity.
+2. Run `bash ~/Downloads/sync-lastsignal-mac.sh` (the updater only changes code and makes a code backup).
+3. Reopen Unity, open **Prototype.unity**, and confirm there are no red Console compilation errors.
+4. Use **Last Signal > Upgrade Scene - V10 Guided Experience and Sound**, once.
+5. Save the scene (Cmd+S), then Play and open Game view. Set Unity Game view Scale to 1x and ensure Game view audio is NOT muted.
+6. Tutorial opens at start; press Enter to dismiss. It pauses the loop and first-person movement while on screen. Press H any time for help.
+7. First goal: go to gold work order around x=-2,z=16, aim at it and press E.
+8. On loop one, stand on purple relay around x=0,z=29 for several seconds; press T for first test rewind.
+9. Reach the red gate around z=33 at the matching time when blue Echo activates the relay. Press E to open gate.
+10. Investigate the purple recording inside, reach an original ending. Additional V8 radio fragments are optional and need V8 installed.
+
+### Sound acceptance
+- On game start hear short incoming-call chirp and a quiet ambient drone.
+- On first reset hear descending rewind sound. Investigating work-order clue triggers soft success cue.
+- If V3 is present, blackout/call warning triggers another short cue.
+- If V5 is present, the Watcher emits its threat sound when approaching.
+- If silent: check Mac volume/output, player camera AudioListener, Unity Game view Mute Audio icon, and AudioSource volume. Source is intentionally quiet and can be adjusted in V10 Guided Experience > SignalSoundscape Inspector.
+
+### QA limitations
+These scripts have been committed but **not yet compiled or tested within the user's Unity installation**. The procedural sounds are design placeholders (not voice acting or layered professional ambience), and the tutorial is OnGUI-based. If an Editor error occurs, do not exit Safe Mode until the red error has been fixed. If V10 causes problems, stop Play mode, delete the `V10 Guided Experience` root, and reload the saved pre-V10 scene copy for full rollback.
