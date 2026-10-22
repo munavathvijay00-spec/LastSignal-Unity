@@ -14,6 +14,7 @@ namespace LastSignal
         [Min(2f)] public float activationWindowSeconds = 14f;
 
         public bool IsOpen { get { return opened; } }
+        public bool EverOpened { get; private set; }
         public float RemainingWindow
         {
             get { return Mathf.Max(0f, validUntil - (worldReference != null ? worldReference.elapsed : 0f)); }
@@ -61,6 +62,7 @@ namespace LastSignal
             }
 
             opened = true;
+            EverOpened = true;
             transform.position += Vector3.up * 4f;
             world.status = "Gate open. You changed the timeline.";
         }
