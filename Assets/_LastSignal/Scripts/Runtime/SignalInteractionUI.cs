@@ -119,7 +119,11 @@ namespace LastSignal
                 "LOOP " + world.loopNumber + "   •   " +
                 Mathf.CeilToInt(Mathf.Max(0f, world.loopDuration - world.elapsed)) + "s UNTIL MIDNIGHT";
             GUI.Label(new Rect(40, 64, 295, 23), time, bodyStyle);
-            GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  INVESTIGATE THE TUNNEL", smallStyle);
+            string objective = "INVESTIGATE THE TUNNEL";
+            if (world != null && world.Knows("code"))
+                objective = world.Knows("recording") ?
+                    "FIND THE SIGNAL OR ESCAPE" : "USE YOUR ECHO TO OPEN THE GATE";
+            GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  " + objective, smallStyle);
 
             if (!phoneOpen)
             {
@@ -160,7 +164,12 @@ namespace LastSignal
                 string evidence = world == null ? "NO SIGNAL" :
                     (world.Knows("code") ? "01  WORK ORDER: ACCESS CODE 0471\n" : "01  WORK ORDER: NOT DISCOVERED\n") +
                     (world.Knows("recording") ? "02  RECORDING: YOUR OWN VOICE" : "02  RECORDING: NOT DISCOVERED");
-                GUI.Label(new Rect(px + 25, py + 290, 340, 92), evidence, phoneBody);
+                GUI.Label(new Rect(px + 25, py + 290, 340, 100), evidence, phoneBody);
+                if (world != null && (world.Knows("frequency") || world.Knows("dispatch")))
+                {
+                    GUI.Label(new Rect(px + 25, py + 385, 350, 24),
+                        "ADDITIONAL SIGNALS RECOVERED", smallStyle);
+                }
                 GUI.DrawTexture(new Rect(px + 25, py + 410, 350, 1), accentTexture);
                 GUI.Label(new Rect(px + 25, py + 430, 350, 50),
                     "Knowledge survives. The world does not.", smallStyle);
