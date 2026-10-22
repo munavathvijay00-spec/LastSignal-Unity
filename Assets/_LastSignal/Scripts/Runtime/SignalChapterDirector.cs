@@ -19,11 +19,13 @@ namespace LastSignal
         private Texture2D background;
         private GUIStyle headline, subtitle;
         private bool prompted;
+        private int previousLoop;
 
         void Start()
         {
             if (!world) world = FindFirstObjectByType<SignalWorld>();
             if (!progression) progression = FindFirstObjectByType<SignalProgression>();
+            previousLoop = world != null ? world.loopNumber : 1;
         }
 
         public bool CanStartChapter2()
@@ -57,6 +59,16 @@ namespace LastSignal
         void Update()
         {
             if (world == null || world.ended) return;
+            if (previousLoop != world.loopNumber)
+            {
+                previousLoop = world.loopNumber;
+                // World.ResetLoop teleports the player back to the original spawn.
+                // Chapter state must match the new physical location.
+                chapter = 1;
+                stationSignalRecovered = false;
+                bannerUntil = 0f;
+                prompted = false;
+            }
             if (chapter == 1 && world.Knows("recording") && !prompted)
             {
                 prompted = true;
