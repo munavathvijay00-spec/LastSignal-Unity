@@ -56,8 +56,8 @@ namespace LastSignal
             if (world.loopNumber>1) Award("rewind",50,"FIRST REWIND");
             if (relayComponent != null && relayComponent.EverActivated)
                 Award("relay",75,"ECHO SYNCHRONIZED");
-            if (stalker != null && stalker.SuccessfulDiversions > 0)
-                Award("watcher_decoy",120,"OUTSMARTED THE WATCHER");
+            if (stalker != null && stalker.ConfirmedEchoEscapes > 0)
+                Award("watcher_decoy",120,"ECHO-ASSISTED ESCAPE");
             if (gateComponent != null && gateComponent.EverOpened)
                 Award("gate",75,"TEMPORAL GATE CLEARED");
             if (world.Knows("recording"))
