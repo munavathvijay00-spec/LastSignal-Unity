@@ -54,7 +54,7 @@ namespace LastSignal
 
             Vector3 delta = stalker.transform.position - world.player.transform.position;
             delta.y = 0f;
-            bool threatened = world.elapsed >= stalker.activateAfterSeconds &&
+            bool threatened = !stalker.IsDistracted && world.elapsed >= stalker.activateAfterSeconds &&
                               delta.sqrMagnitude < detectionDistance * detectionDistance;
             if (threatened && !source.isPlaying) source.Play();
             else if (!threatened && source.isPlaying) source.Stop();
