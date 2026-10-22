@@ -18,6 +18,14 @@ namespace LastSignal {
   GameObject echo;
   float captureClock,echoClock;
   public bool Knows(string id)=>knowledge.Contains(id);
+  public bool TryGetEchoPosition(out Vector3 position) {
+   if (echo != null && lastPath != null && lastPath.Count > 0) {
+    position=echo.transform.position;
+    return true;
+   }
+   position=Vector3.zero;
+   return false;
+  }
   public bool EchoNear(Vector3 position, float radius) {
    if (echo == null || lastPath == null || lastPath.Count == 0) return false;
    Vector3 flatDelta = echo.transform.position - position;
