@@ -117,7 +117,7 @@ namespace LastSignal
             GUI.Label(new Rect(40, 29, 295, 29), "LAST SIGNAL   /   11:47 PM", titleStyle);
             string time = world == null ? "NO SIGNAL" :
                 "LOOP " + world.loopNumber + "   •   " +
-                Mathf.CeilToInt(Mathf.Max(0f, world.loopDuration - world.elapsed)) + "s UNTIL MIDNIGHT";
+                Mathf.CeilToInt(Mathf.Max(0f, world.loopDuration - world.elapsed)) + "s UNTIL REWIND";
             GUI.Label(new Rect(40, 64, 295, 23), time, bodyStyle);
             string objective = "INVESTIGATE THE TUNNEL";
             if (world != null && world.Knows("code"))
