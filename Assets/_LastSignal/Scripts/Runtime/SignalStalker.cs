@@ -17,6 +17,15 @@ namespace LastSignal
         public float echoHoldSeconds = 5f;
         public bool IsDistracted { get; private set; }
         public int SuccessfulDiversions { get; private set; }
+        public int ConfirmedEchoEscapes { get; private set; }
+        public bool EscapeWindowActive { get { return escapePending && Time.time <= escapeDeadline; } }
+        public float EscapeSecondsRemaining { get { return EscapeWindowActive ? Mathf.Max(0f, escapeDeadline - Time.time) : 0f; } }
+        public float escapeDeadlineSeconds = 12f;
+        public float escapeDistance = 14f;
+        public float escapeTravelDistance = 6f;
+        private bool escapePending;
+        private float escapeDeadline;
+        private Vector3 escapeStart;
         private float distractedUntil;
         private bool wasEchoNear;
         public float catchDistance = 1.65f;
@@ -90,6 +99,7 @@ namespace LastSignal
                 distractedUntil = 0f;
                 wasEchoNear = false;
                 lastSightTime = -100f;
+                escapePending = false;
                 preferredSide = 1;
             }
 
@@ -115,12 +125,35 @@ namespace LastSignal
             {
                 distractedUntil = Time.time + echoHoldSeconds;
                 if (target != null && Vector3.Distance(target.position, transform.position) <= alertDistance * 1.75f)
+                {
                     SuccessfulDiversions++;
+                    escapePending = true;
+                    escapeStart = target.position;
+                    escapeDeadline = Time.time + Mathf.Max(1f, escapeDeadlineSeconds);
+                }
                 world.status = "WATCHER DISTRACTED: YOUR PREVIOUS SELF DREW ITS ATTENTION.";
             }
             wasEchoNear = echoInRange;
             bool distracted = echoExists && Time.time < distractedUntil;
             IsDistracted = distracted;
+            if (escapePending)
+            {
+                if (Time.time > escapeDeadline) escapePending = false;
+                else
+                {
+                    Vector3 fromThreat = target.position - transform.position;
+                    fromThreat.y = 0f;
+                    Vector3 fromStart = target.position - escapeStart;
+                    fromStart.y = 0f;
+                    if (fromThreat.magnitude >= escapeDistance &&
+                        fromStart.magnitude >= escapeTravelDistance)
+                    {
+                        escapePending = false;
+                        ConfirmedEchoEscapes++;
+                        world.status = "ECHO ESCAPE CONFIRMED: YOU USED YOUR PAST SELF TO SURVIVE.";
+                    }
+                }
+            }
             Vector3 destination = distracted ? echoPosition :
                 chasing ? lastSeenPosition : (goingToB ? patrolB : patrolA);
             destination.y = transform.position.y;
