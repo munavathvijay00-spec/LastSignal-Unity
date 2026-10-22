@@ -1,36 +1,185 @@
 using UnityEngine;
-namespace LastSignal {
- public sealed class SignalInteractionUI:MonoBehaviour {
-  public Camera playerCamera;
-  public SignalWorld world;
-  public float range=3.5f;
-  private bool phoneOpen;
-  void Update(){
-   if(world && world.ended){if(Input.GetKeyDown(KeyCode.R))world.RestartGame();return;}
-   if(Input.GetKeyDown(KeyCode.T) && world != null && world.loopNumber == 1) world.ResetLoop();
-   if(Input.GetKeyDown(KeyCode.Tab)){phoneOpen=!phoneOpen;Cursor.lockState=phoneOpen?CursorLockMode.None:CursorLockMode.Locked;}
-   if(Input.GetKeyDown(KeyCode.E) && !phoneOpen && Cursor.lockState==CursorLockMode.Locked && LookAt(out var target))target.Interact(world);
-  }
-  bool LookAt(out SignalInteractable target){
-   target=null;
-   if(!playerCamera || !Physics.Raycast(playerCamera.transform.position,playerCamera.transform.forward,out var hit,range))return false;
-   target=hit.collider.GetComponentInParent<SignalInteractable>();
-   return target!=null;
-  }
-  void OnGUI(){
-   GUI.Box(new Rect(12,12,510,90),world?world.StatusText():"LAST SIGNAL");
-   if(world && world.ended){GUI.Box(new Rect(Screen.width/2f-260,Screen.height/2f-75,520,150),world.StatusText());return;}
-   if(!phoneOpen){
-    GUI.Label(new Rect(Screen.width/2f-5,Screen.height/2f-10,60,30),"+");
-    if(LookAt(out var target))GUI.Box(new Rect(Screen.width/2f-145,Screen.height-85,290,42),"[E] "+target.prompt);
-    GUI.Label(new Rect(15,Screen.height-35,580,30),"WASD Move | Shift Sprint | F Flashlight | Tab Phone | T Test Rewind");
-   }else{
-    GUI.Box(new Rect(Screen.width/2f-230,Screen.height/2f-180,460,360),"UNKNOWN NUMBER • 11:47 PM");
-    GUI.Label(new Rect(Screen.width/2f-195,Screen.height/2f-120,390,150),
-      "DON'T ENTER THE TUNNEL.\nI made that mistake last time.\n\n"+
-      (world && world.Knows("code")?"SAVED CLUE: 0471":"NO SAVED CLUES YET"));
-    GUI.Label(new Rect(Screen.width/2f-190,Screen.height/2f+125,380,30),"Press TAB to close");
-   }
-  }
- }
+
+namespace LastSignal
+{
+    /// <summary>Self-contained cinematic HUD and phone UI; no external fonts/assets required.</summary>
+    public sealed class SignalInteractionUI : MonoBehaviour
+    {
+        public Camera playerCamera;
+        public SignalWorld world;
+        public float range = 3.5f;
+
+        private bool phoneOpen;
+        private GUIStyle titleStyle, bodyStyle, smallStyle, promptStyle, phoneTitle, phoneBody, overlayStyle;
+        private Texture2D panelTexture, phoneTexture, accentTexture, blackTexture;
+        private bool initialized;
+        private float notificationUntil;
+        private string lastStatus = "";
+
+        private static Texture2D Solid(Color color)
+        {
+            var texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            texture.SetPixel(0, 0, color);
+            texture.Apply();
+            texture.hideFlags = HideFlags.DontSave;
+            return texture;
+        }
+
+        private void Initialize()
+        {
+            if (initialized) return;
+            initialized = true;
+            panelTexture = Solid(new Color(.018f, .035f, .055f, .85f));
+            phoneTexture = Solid(new Color(.018f, .023f, .038f, .98f));
+            accentTexture = Solid(new Color(.26f, .88f, .84f, 1));
+            blackTexture = Solid(new Color(0, 0, 0, .7f));
+            titleStyle = Style(23, new Color(.76f, 1, .96f), FontStyle.Bold);
+            bodyStyle = Style(16, Color.white, FontStyle.Normal);
+            smallStyle = Style(12, new Color(.72f, .79f, .84f), FontStyle.Normal);
+            promptStyle = Style(17, Color.white, FontStyle.Bold);
+            phoneTitle = Style(19, Color.white, FontStyle.Bold);
+            phoneBody = Style(16, new Color(.87f, .91f, .96f), FontStyle.Normal);
+            overlayStyle = Style(28, Color.white, FontStyle.Bold);
+            phoneBody.wordWrap = true;
+            bodyStyle.wordWrap = true;
+        }
+
+        private static GUIStyle Style(int fontSize, Color color, FontStyle weight)
+        {
+            return new GUIStyle(GUI.skin.label) {
+                fontSize = fontSize, fontStyle = weight,
+                normal = { textColor = color }, alignment = TextAnchor.MiddleLeft,
+                clipping = TextClipping.Clip
+            };
+        }
+
+        private void Update()
+        {
+            if (world != null && world.ended)
+            {
+                if (Input.GetKeyDown(KeyCode.R)) world.RestartGame();
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.T) && world != null && world.loopNumber == 1)
+                world.ResetLoop();
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                phoneOpen = !phoneOpen;
+                Cursor.lockState = phoneOpen ? CursorLockMode.None : CursorLockMode.Locked;
+                Cursor.visible = phoneOpen;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E) && !phoneOpen &&
+                Cursor.lockState == CursorLockMode.Locked && LookAt(out SignalInteractable target))
+                target.Interact(world);
+
+            if (world != null && world.status != lastStatus)
+            {
+                lastStatus = world.status;
+                notificationUntil = Time.time + 5f;
+            }
+        }
+
+        private bool LookAt(out SignalInteractable target)
+        {
+            target = null;
+            if (playerCamera == null) return false;
+            RaycastHit hit;
+            if (!Physics.Raycast(playerCamera.transform.position,
+                playerCamera.transform.forward, out hit, range)) return false;
+            target = hit.collider.GetComponentInParent<SignalInteractable>();
+            return target != null;
+        }
+
+        private void OnGUI()
+        {
+            Initialize();
+            float w = Screen.width, h = Screen.height;
+            float scale = Mathf.Min(w / 1280f, h / 720f);
+            scale = Mathf.Max(.62f, scale);
+            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1));
+            w /= scale; h /= scale;
+
+            if (world != null && world.ended)
+            {
+                GUI.DrawTexture(new Rect(0, 0, w, h), blackTexture);
+                CenterLabel(new Rect(0, h * .31f, w, 62), world.endingTitle, overlayStyle);
+                CenterLabel(new Rect(0, h * .43f, w, 55), world.endingDescription, bodyStyle);
+                CenterLabel(new Rect(0, h * .58f, w, 35), "R  —  RESTART TIMELINE", promptStyle);
+                return;
+            }
+
+            // Time and objective, top-left.
+            GUI.DrawTexture(new Rect(22, 20, 340, 104), panelTexture);
+            GUI.DrawTexture(new Rect(22, 20, 4, 104), accentTexture);
+            GUI.Label(new Rect(40, 29, 295, 29), "LAST SIGNAL   /   11:47 PM", titleStyle);
+            string time = world == null ? "NO SIGNAL" :
+                "LOOP " + world.loopNumber + "   •   " +
+                Mathf.CeilToInt(Mathf.Max(0f, world.loopDuration - world.elapsed)) + "s UNTIL MIDNIGHT";
+            GUI.Label(new Rect(40, 64, 295, 23), time, bodyStyle);
+            GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  INVESTIGATE THE TUNNEL", smallStyle);
+
+            if (!phoneOpen)
+            {
+                // Minimal reticle and interaction hint.
+                var cross = new GUIStyle(promptStyle) { alignment = TextAnchor.MiddleCenter };
+                GUI.Label(new Rect(w / 2f - 10, h / 2f - 14, 20, 28), "+", cross);
+                if (LookAt(out SignalInteractable target))
+                {
+                    GUI.DrawTexture(new Rect(w / 2f - 210, h - 130, 420, 50), panelTexture);
+                    CenterLabel(new Rect(w / 2f - 205, h - 129, 410, 46),
+                        "[ E ]    " + target.prompt, promptStyle);
+                }
+                GUI.DrawTexture(new Rect(22, h - 53, 594, 33), panelTexture);
+                GUI.Label(new Rect(35, h - 52, 580, 30),
+                    "WASD MOVE  •  SHIFT SPRINT  •  F LIGHT  •  TAB PHONE  •  T REWIND", smallStyle);
+
+                if (world != null && Time.time < notificationUntil)
+                {
+                    GUI.DrawTexture(new Rect(w - 470, 22, 445, 90), panelTexture);
+                    GUI.DrawTexture(new Rect(w - 470, 22, 4, 90), accentTexture);
+                    GUI.Label(new Rect(w - 452, 26, 410, 21), "NEW TIMELINE EVENT", smallStyle);
+                    GUI.Label(new Rect(w - 452, 46, 410, 60), world.status, bodyStyle);
+                }
+            }
+            else
+            {
+                GUI.DrawTexture(new Rect(0, 0, w, h), blackTexture);
+                float px = w / 2f - 200f, py = h / 2f - 286f;
+                GUI.DrawTexture(new Rect(px, py, 400, 575), phoneTexture);
+                GUI.DrawTexture(new Rect(px, py, 400, 5), accentTexture);
+                GUI.Label(new Rect(px + 25, py + 25, 350, 28), "SIGNAL / UNKNOWN NUMBER", phoneTitle);
+                GUI.Label(new Rect(px + 25, py + 60, 350, 30), "11:47 PM  •  ENCRYPTED CALL", smallStyle);
+                GUI.DrawTexture(new Rect(px + 25, py + 104, 350, 1), accentTexture);
+                GUI.Label(new Rect(px + 25, py + 127, 345, 110),
+                    "DON'T ENTER THE TUNNEL.\nI MADE THAT MISTAKE LAST TIME.", phoneBody);
+                GUI.Label(new Rect(px + 25, py + 250, 340, 30), "EVIDENCE LOG", phoneTitle);
+
+                string evidence = world == null ? "NO SIGNAL" :
+                    (world.Knows("code") ? "01  WORK ORDER: ACCESS CODE 0471\n" : "01  WORK ORDER: NOT DISCOVERED\n") +
+                    (world.Knows("recording") ? "02  RECORDING: YOUR OWN VOICE" : "02  RECORDING: NOT DISCOVERED");
+                GUI.Label(new Rect(px + 25, py + 290, 340, 92), evidence, phoneBody);
+                GUI.DrawTexture(new Rect(px + 25, py + 410, 350, 1), accentTexture);
+                GUI.Label(new Rect(px + 25, py + 430, 350, 50),
+                    "Knowledge survives. The world does not.", smallStyle);
+                CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
+            }
+        }
+
+        private static void CenterLabel(Rect rect, string content, GUIStyle style)
+        {
+            var centered = new GUIStyle(style) { alignment = TextAnchor.MiddleCenter, wordWrap = true };
+            GUI.Label(rect, content, centered);
+        }
+
+        private void OnDestroy()
+        {
+            if (panelTexture != null) Destroy(panelTexture);
+            if (phoneTexture != null) Destroy(phoneTexture);
+            if (accentTexture != null) Destroy(accentTexture);
+            if (blackTexture != null) Destroy(blackTexture);
+        }
+    }
 }
