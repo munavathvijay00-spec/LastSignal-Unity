@@ -60,6 +60,21 @@ public static class SignalSceneHealthCheck
                 Debug.LogWarning("[LAST SIGNAL QA] Watcher obstacle probe too short for reliable avoidance");
         }
 
+        var shelter=Object.FindFirstObjectByType<SignalShelterDoor>();
+        if(GameObject.Find("Echo Escape Arena")!=null)
+        {
+            if(shelter==null || shelter.shutter==null)
+            {
+                Debug.LogError("[LAST SIGNAL QA] Escape arena needs a linked shelter and shutter");
+                fail++;
+            }
+            else if(shelter.watcher==null)
+            {
+                Debug.LogError("[LAST SIGNAL QA] Shelter does not reference the Watcher");
+                fail++;
+            }
+        }
+
         if(Object.FindFirstObjectByType<SignalGuide>()==null)
             Debug.LogWarning("[LAST SIGNAL QA] Guided introduction not installed");
         if(Object.FindFirstObjectByType<SignalSoundscape>()==null)
