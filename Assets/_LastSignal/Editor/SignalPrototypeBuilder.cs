@@ -50,7 +50,13 @@ public static class SignalPrototypeBuilder
         var paper=Cube("Maintenance work order",new Vector3(-2,1,16),new Vector3(1,1,.2f),new Color(.92f,.75f,.35f));
         paper.AddComponent<SignalClue>().prompt="Read maintenance work order";
         var gate=Cube("Maintenance gate",new Vector3(0,2,33),new Vector3(7,4,.5f),new Color(.6f,.13f,.12f));
-        gate.AddComponent<SignalDoor>().prompt="Unlock gate";
+        var gateDoor=gate.AddComponent<SignalDoor>();
+        gateDoor.prompt="Unlock temporal gate";
+        gateDoor.requireEcho=true;
+        var relay=Cube("Echo relay plate",new Vector3(0,.03f,29),new Vector3(3,.2f,3),new Color(.4f,.1f,.5f));
+        var plate=relay.AddComponent<SignalEchoPlate>();
+        plate.world=world;
+        gateDoor.echoPlate=plate;
         var exit=Cube("Signal tower escape",new Vector3(0,1.4f,46),new Vector3(3,2.8f,.8f),new Color(.14f,.75f,.65f));
         var escaped=exit.AddComponent<SignalEnding>();escaped.prompt="Escape the town";
         var audioClue=Cube("Hidden transmitter recording",new Vector3(3.6f,1.2f,35.5f),new Vector3(.65f,.65f,.25f),new Color(.7f,.35f,.9f));
@@ -70,6 +76,9 @@ public static class SignalPrototypeBuilder
             point.color=i%3==0?new Color(1,.2f,.15f):new Color(.5f,.7f,1f);
         }
         EditorSceneManager.SaveScene(scene,folder+"/Prototype.unity");
+        EditorBuildSettings.scenes=new [] {
+            new EditorBuildSettingsScene(folder+"/Prototype.unity",true)
+        };
         AssetDatabase.Refresh();
         EditorUtility.DisplayDialog("LAST SIGNAL",
             "Prototype generated. Open Prototype.unity and press Play. For old Input axes set Active Input Handling to Both.", "OK");
