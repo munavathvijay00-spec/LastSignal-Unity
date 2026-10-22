@@ -68,3 +68,29 @@ A non-destructive editor command now expands the existing scene with collider-ba
 5. Confirm falling does not occur, original clues and Echo gate still work, and Console has zero red runtime errors.
 
 V4 procedural geometry is intentionally a functional blockout. The visual polish required for a competition-ready world will come from replacing it with licensed production assets and iterative Game-view tests. The upgrade source has **not been runtime-tested in Unity by ChatGPT**.
+
+
+## V5 Stalker Thriller — focused gameplay upgrade
+V5 is a small tension encounter added **on top of your existing scene**. It does not overwrite the terrain, time-loop puzzle, or saved scene.
+
+### Install
+1. Save the Unity scene, exit Play mode, then quit Unity.
+2. Run `bash ~/Downloads/sync-lastsignal-mac.sh` to update gameplay and editor scripts (local script backup is created).
+3. Reopen your existing project and `Assets/_LastSignal/Scenes/Prototype.unity`.
+4. Confirm **zero red Console compilation errors** before upgrading.
+5. Choose **Last Signal > Upgrade Scene - V5 Stalker Thriller**, **not** Generate Playable Prototype.
+6. Save the scene with Cmd+S.
+7. Press Play and open Game view.
+
+### Gameplay test
+- During the first 65 seconds, the Watcher stays inactive near the tunnel approach.
+- Afterwards, the Watcher patrols, and approaches when the player comes within ~9m.
+- At close range, a heartbeat-like synthesized warning pulse starts; leaving the danger radius stops it.
+- If caught within ~1.65m, the timeline rewinds, preserving learned clues and replacing the last Future Echo path.
+- Verify the phone, work order, Echo relay and endings still function.
+- Verify the player remains on surrounding terrain; use the separate V4 collision fix if missing.
+
+### Rollback
+To remove V5, stop Play mode, delete the `V5 Stalker Thriller` GameObject in the Hierarchy, and save. Keep the committed source files; they're inert if not attached.
+
+This is still a procedural character proxy, not a fully animated enemy or cinematic stealth AI. The V5 scripts are committed but **not yet compiled or playtested in the target Unity Editor**.
