@@ -16,6 +16,7 @@ namespace LastSignal
         public float echoAttractionDistance = 13f;
         public float echoHoldSeconds = 5f;
         public bool IsDistracted { get; private set; }
+        public int SuccessfulDiversions { get; private set; }
         private float distractedUntil;
         private bool wasEchoNear;
         public float catchDistance = 1.65f;
@@ -113,6 +114,8 @@ namespace LastSignal
             if (echoInRange && !wasEchoNear)
             {
                 distractedUntil = Time.time + echoHoldSeconds;
+                if (target != null && Vector3.Distance(target.position, transform.position) <= alertDistance * 1.75f)
+                    SuccessfulDiversions++;
                 world.status = "WATCHER DISTRACTED: YOUR PREVIOUS SELF DREW ITS ATTENTION.";
             }
             wasEchoNear = echoInRange;
