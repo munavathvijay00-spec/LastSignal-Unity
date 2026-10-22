@@ -17,6 +17,12 @@ namespace LastSignal {
   GameObject echo;
   float captureClock,echoClock;
   public bool Knows(string id)=>knowledge.Contains(id);
+  public bool EchoNear(Vector3 position, float radius) {
+   if (echo == null || lastPath == null || lastPath.Count == 0) return false;
+   Vector3 flatDelta = echo.transform.position - position;
+   flatDelta.y = 0;
+   return flatDelta.sqrMagnitude <= radius * radius;
+  }
   public void Discover(string id,string message){if(!ended)status=knowledge.Add(id)?message:"Already discovered: "+id;}
   void Update(){
    if(!player || ended)return;
