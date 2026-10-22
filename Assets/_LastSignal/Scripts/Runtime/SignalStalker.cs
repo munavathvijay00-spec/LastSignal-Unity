@@ -35,8 +35,12 @@ namespace LastSignal
 
         private bool HasClearPath(Vector3 destination)
         {
-            return !Physics.Linecast(transform.position + Vector3.up * .25f,
-                destination + Vector3.up * .25f, ~0, QueryTriggerInteraction.Ignore);
+            RaycastHit hit;
+            if (!Physics.Linecast(transform.position + Vector3.up * .25f,
+                destination + Vector3.up * .85f, out hit, ~0, QueryTriggerInteraction.Ignore))
+                return true;
+            // The player's CharacterController is the expected end target, not a wall.
+            return hit.collider != null && hit.collider.GetComponentInParent<SignalPlayer>() != null;
         }
 
         // Local avoidance only: tries the open side around a blocking object.
