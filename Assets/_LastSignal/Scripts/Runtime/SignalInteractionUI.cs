@@ -123,6 +123,8 @@ namespace LastSignal
             if (world != null && world.Knows("code"))
                 objective = world.Knows("recording") ?
                     "FIND THE SIGNAL OR ESCAPE" : "USE YOUR ECHO TO OPEN THE GATE";
+            if (world != null && (world.Knows("signal_radio") || world.Knows("signal_checkpoint") || world.Knows("signal_service")))
+                objective = "COLLECT 3 SIGNALS AND DECODE SOURCE";
             GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  " + objective, smallStyle);
 
             if (!phoneOpen)
@@ -171,8 +173,15 @@ namespace LastSignal
                         "ADDITIONAL SIGNALS RECOVERED", smallStyle);
                 }
                 GUI.DrawTexture(new Rect(px + 25, py + 410, 350, 1), accentTexture);
-                GUI.Label(new Rect(px + 25, py + 430, 350, 50),
-                    "Knowledge survives. The world does not.", smallStyle);
+                int fragments = world == null ? 0 :
+                    (world.Knows("signal_service") ? 1 : 0) +
+                    (world.Knows("signal_radio") ? 1 : 0) +
+                    (world.Knows("signal_checkpoint") ? 1 : 0);
+                GUI.Label(new Rect(px + 25, py + 425, 350, 25),
+                    "SIGNAL FRAGMENTS: " + fragments + " / 3", phoneBody);
+                GUI.Label(new Rect(px + 25, py + 455, 350, 42),
+                    "Search the service station, radio station and checkpoint.\nKnowledge survives every rewind.",
+                    smallStyle);
                 CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
             }
         }
