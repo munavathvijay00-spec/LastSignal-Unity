@@ -209,3 +209,21 @@ This patch fixes two guided-intro usability problems: **the regular phone/HUD no
 **Apply:** Save scene, quit Unity, run `bash ~/Downloads/sync-lastsignal-mac.sh`, reopen existing Prototype scene. Check Console for zero red compile errors, select **Last Signal > Run Scene Health Check**. If health passes, press Play and verify the tutorial alone appears; Enter closes it and unlocks gameplay, H reopens it, Tab opens the phone after closing tutorial, and the audio chime/drone works. Never regenerate Prototype to apply these fixes.
 
 **Status:** GitHub source committed; requires Unity-side compilation and playtesting.
+
+
+## V11 — Echo Progression (first playable level-up)
+V11 introduces an additive in-session Echo rank system. XP is awarded **once** per unique achievement: work order +50, first rewind +50, Echo relay +75, gate clearance +75, recording +100, optional V8 fragments +35 each. At 100 XP, Echo Vision unlocks: press **V** to toggle waypoint labels above relay, gate and recording. Recovering the hidden transmitter recording triggers a Chapter 1 completion notice and Chapter 2 teaser. XP survives loop rewinds but resets with scene reload; no save-to-disk or other levels are implemented.
+
+### Installation and test
+1. Save a backup copy of Prototype.unity. Quit Unity and run `bash ~/Downloads/sync-lastsignal-mac.sh`.
+2. Reopen original Prototype scene, confirm Console has zero **red** compile errors.
+3. Select **Last Signal > Upgrade Scene - V11 Echo Progression** once, save with Cmd+S.
+4. Press Play, dismiss V10 tutorial with Enter if installed.
+5. Interact with gold work order (E): see +50 XP. Rewind (T, first loop): see +50 XP and **V** unlocks Echo Vision.
+6. Press V to show relay, gate and recording target labels. Record your path on relay before resetting to open gate with Echo. Earn additional XP.
+7. Recover recording: see Chapter 1 completion notice.
+8. Rewind again: XP and unlocked vision should remain, but duplicating the same clue should not grant XP again.
+9. Restart the entire scene: demo XP returns to zero.
+10. Test at 1x Game scale and check Console for repeating runtime exceptions.
+
+V11 upgrades player feedback and progression **only**; it does not yet create multiple completed Unity levels, persistent player accounts, combat skill trees or production art. Source committed; pending Unity compilation and playtesting.
