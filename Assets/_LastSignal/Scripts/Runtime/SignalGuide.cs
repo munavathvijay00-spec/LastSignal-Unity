@@ -20,6 +20,7 @@ namespace LastSignal
         private Texture2D backdrop;
         private int lastLoop;
         private SignalDoor tunnelDoor;
+        private SignalChapterDirector chapterDirector;
 
         void Start()
         {
@@ -31,6 +32,7 @@ namespace LastSignal
             if (!receiver) { var o = GameObject.Find("Hidden transmitter recording"); if (o) receiver = o.transform; }
             lastLoop = world ? world.loopNumber : 1;
             tunnelDoor = FindFirstObjectByType<SignalDoor>();
+            chapterDirector = FindFirstObjectByType<SignalChapterDirector>();
             SetTutorialPause(true);
             backdrop = new Texture2D(1, 1);
             backdrop.SetPixel(0, 0, new Color(.015f, .03f, .055f, .94f));
@@ -69,6 +71,8 @@ namespace LastSignal
         string CurrentObjective()
         {
             if (!world) return "Find the work order near the tunnel.";
+            if (chapterDirector != null && chapterDirector.chapter == 2)
+                return chapterDirector.stationSignalRecovered ? "CHAPTER 2: SEARCH THE CHECKPOINT FOR THE NEXT SIGNAL." : "CHAPTER 2: RECOVER THE RADIO STATION SIGNAL (E).";
             if (!world.Knows("code")) return "STEP 1: Find the GOLD work order beside the road. Aim at it and press E.";
             if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
@@ -79,6 +83,7 @@ namespace LastSignal
 
         Transform CurrentTarget()
         {
+            if (chapterDirector != null && chapterDirector.chapter == 2) return null;
             if (!world || !world.Knows("code")) return clue;
             if (world.Knows("recording")) { var next=GameObject.Find("Chapter 2 Transit Beacon"); return next ? next.transform : receiver; }
             if (tunnelDoor != null && tunnelDoor.IsOpen) return receiver;
