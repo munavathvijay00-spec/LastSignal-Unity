@@ -19,6 +19,7 @@ namespace LastSignal
         private Texture2D panel;
         private GUIStyle heading, body;
         private bool wasDanger, wasDistracted;
+        private int observedEscapes;
         private float messageUntil;
         private string message = "";
 
@@ -53,7 +54,14 @@ namespace LastSignal
             bool danger = active && delta.sqrMagnitude < dangerRange * dangerRange
                 && !watcher.IsDistracted;
             bool distracted = active && watcher.IsDistracted;
-            if (distracted && !wasDistracted)
+            if (watcher.ConfirmedEchoEscapes > observedEscapes)
+            {
+                observedEscapes = watcher.ConfirmedEchoEscapes;
+                message = "ESCAPE CONFIRMED — YOUR PAST SELF SAVED YOU";
+                messageUntil = Time.time + 5f;
+                if (source) source.PlayOneShot(warning);
+            }
+            else if (distracted && !wasDistracted)
             {
                 message = "YOUR ECHO DISTRACTED THE WATCHER — ESCAPE NOW";
                 messageUntil = Time.time + 4f;
@@ -103,6 +111,12 @@ namespace LastSignal
                 GUI.DrawTexture(new Rect(w / 2f - 140, 245, 280, 40), panel);
                 GUI.Label(new Rect(w / 2f - 135, 252, 270, 26),
                     "WATCHER ARRIVES IN " + seconds + "s", body);
+            }
+            else if (watcher.EscapeWindowActive)
+            {
+                GUI.DrawTexture(new Rect(w / 2f - 200, 245, 400, 42), panel);
+                GUI.Label(new Rect(w / 2f - 195, 249, 390, 32),
+                    "ESCAPE THE WATCHER   " + Mathf.CeilToInt(watcher.EscapeSecondsRemaining) + "s", heading);
             }
             else if (watcher.IsDistracted)
             {
