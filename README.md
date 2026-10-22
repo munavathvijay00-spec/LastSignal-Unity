@@ -56,3 +56,15 @@ V3 adds a responsive smartphone-style HUD, opening alerts, a timed blackout, imp
 
 ### V3 constraints and testing
 These are committed source changes, but **not yet compiled or game-tested** in the user's Unity Editor. The visual improvements remain procedural stand-in art; models, sound and enemy behavior are still pending. The existing V2 environment should be installed before the V3 upgrade; if V2 is absent, the script skips tree replacement. The UI currently uses legacy OnGUI as an interim solution, not a production UI Toolkit implementation.
+
+
+## V4 Safe Exploration (off-road gameplay)
+A non-destructive editor command now expands the existing scene with collider-backed surroundings, side forest trails, landmark posts, and visible boundary ridges.
+
+1. Save and quit Unity. Run `bash ~/Downloads/sync-lastsignal-mac.sh`.
+2. Reopen Unity and the existing `Prototype.unity` (do **not** regenerate the baseline).
+3. Use **Last Signal > Upgrade Scene - V4 Safe Exploration** exactly once.
+4. Save, Play, and try stepping off both sides of the road, onto the side trails, toward the outer ridges, and back.
+5. Confirm falling does not occur, original clues and Echo gate still work, and Console has zero red runtime errors.
+
+V4 procedural geometry is intentionally a functional blockout. The visual polish required for a competition-ready world will come from replacing it with licensed production assets and iterative Game-view tests. The upgrade source has **not been runtime-tested in Unity by ChatGPT**.
