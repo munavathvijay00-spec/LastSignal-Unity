@@ -69,6 +69,7 @@ public static class SignalV6WorldBuilder
         // Beyond the existing tunnel, gameplay opens into three distinct landmarks.
         Road(parent,"North access road",new Vector3(0,-.22f,69),new Vector3(11,.13f,50));
         Road(parent,"Station crossroad",new Vector3(13,-.21f,91),new Vector3(34,.13f,9));
+        Road(parent,"Checkpoint connector",new Vector3(0,-.22f,105),new Vector3(9,.13f,29));
         Road(parent,"Checkpoint approach",new Vector3(-14,-.21f,114),new Vector3(37,.13f,8));
         Road(parent,"Forest return trail",new Vector3(-28,-.22f,73),new Vector3(7,.13f,90));
 
@@ -109,7 +110,7 @@ public static class SignalV6WorldBuilder
         for (int i=0;i<90;i++)
         {
             float z=45+(float)rng.NextDouble()*100;
-            float x=(i%2==0?-1:1)*(37+(float)rng.NextDouble()*45);
+            float x=(i%2==0?-1:1)*(37+(float)rng.NextDouble()*35);
             float tall=4+(float)rng.NextDouble()*5;
             Tree(parent,"Pine "+i,new Vector3(x,-.28f,z),tall);
         }
