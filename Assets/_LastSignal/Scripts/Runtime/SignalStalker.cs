@@ -13,6 +13,10 @@ namespace LastSignal
         public Light warningEye;
         public float activateAfterSeconds = 65f;
         public float alertDistance = 9f;
+        public float echoAttractionDistance = 13f;
+        public float echoHoldSeconds = 5f;
+        private float distractedUntil;
+        private bool wasEchoNear;
         public float catchDistance = 1.65f;
         public float patrolSpeed = 1.1f;
         public float pursuitSpeed = 2.65f;
@@ -39,6 +43,8 @@ namespace LastSignal
                 goingToB = true;
                 transform.position = patrolA;
                 nextWarning = 0f;
+                distractedUntil = 0f;
+                wasEchoNear = false;
             }
 
             if (world.elapsed < activateAfterSeconds)
@@ -50,15 +56,26 @@ namespace LastSignal
             Vector3 delta = target.position - transform.position;
             delta.y = 0f;
             bool chasing = delta.sqrMagnitude < alertDistance * alertDistance;
-
-            Vector3 destination = chasing
-                ? target.position
-                : (goingToB ? patrolB : patrolA);
+            Vector3 echoPosition;
+            bool echoExists = world.TryGetEchoPosition(out echoPosition);
+            Vector3 echoDelta = echoPosition - transform.position;
+            echoDelta.y = 0f;
+            bool echoInRange = echoExists && echoDelta.sqrMagnitude <
+                echoAttractionDistance * echoAttractionDistance;
+            if (echoInRange && !wasEchoNear)
+            {
+                distractedUntil = Time.time + echoHoldSeconds;
+                world.status = "WATCHER DISTRACTED: YOUR PREVIOUS SELF DREW ITS ATTENTION.";
+            }
+            wasEchoNear = echoInRange;
+            bool distracted = echoExists && Time.time < distractedUntil;
+            Vector3 destination = distracted ? echoPosition :
+                chasing ? target.position : (goingToB ? patrolB : patrolA);
             destination.y = transform.position.y;
 
             Vector3 direction = destination - transform.position;
             direction.y = 0f;
-            float step = (chasing ? pursuitSpeed : patrolSpeed) * Time.deltaTime;
+            float step = ((chasing || distracted) ? pursuitSpeed : patrolSpeed) * Time.deltaTime;
 
             if (direction.sqrMagnitude > .001f)
             {
@@ -72,17 +89,17 @@ namespace LastSignal
 
             if (warningEye != null)
             {
-                warningEye.enabled = chasing;
+                warningEye.enabled = chasing || distracted;
                 warningEye.intensity = 3f + Mathf.Sin(Time.time * 8f);
             }
 
-            if (chasing && Time.time > nextWarning)
+            if (chasing && !distracted && Time.time > nextWarning)
             {
                 nextWarning = Time.time + 7f;
                 world.status = "SOMETHING IS FOLLOWING YOU. RUN OR CHANGE THE TIMELINE.";
             }
 
-            if (chasing && delta.sqrMagnitude <= catchDistance * catchDistance)
+            if (chasing && !distracted && delta.sqrMagnitude <= catchDistance * catchDistance)
             {
                 world.ResetLoop();
                 // Loop 2 starts safely; the stalker stays inactive until its next activation time.
