@@ -193,7 +193,7 @@ public static class SignalV6WorldBuilder
         var unit=GameObject.CreatePrimitive(PrimitiveType.Sphere);
         unit.name=name;unit.transform.SetParent(p);unit.transform.position=pos;
         unit.transform.localScale=Vector3.one*.44f;
-        Object.DestroyImmediate(unit.GetComponent<Collider>());
+        UnityEngine.Object.DestroyImmediate(unit.GetComponent<Collider>());
         var shader=Shader.Find("Universal Render Pipeline/Lit");
         if(shader==null)shader=Shader.Find("Standard");
         if(shader!=null)
@@ -216,7 +216,7 @@ public static class SignalV6WorldBuilder
             canopy.name=name+" canopy "+i;canopy.transform.SetParent(p);
             canopy.transform.position=pos+new Vector3(0,h*(.46f+i*.2f),0);
             canopy.transform.localScale=new Vector3(1.4f-i*.3f,.18f,1.4f-i*.3f);
-            Object.DestroyImmediate(canopy.GetComponent<Collider>());
+            UnityEngine.Object.DestroyImmediate(canopy.GetComponent<Collider>());
             var shader=Shader.Find("Universal Render Pipeline/Lit");
             if(shader!=null)
             {
@@ -231,7 +231,7 @@ public static class SignalV6WorldBuilder
         var obj=GameObject.CreatePrimitive(PrimitiveType.Cube);
         obj.name=name;obj.transform.SetParent(p);
         obj.transform.position=pos;obj.transform.localScale=size;
-        if(!collision) Object.DestroyImmediate(obj.GetComponent<Collider>());
+        if(!collision) UnityEngine.Object.DestroyImmediate(obj.GetComponent<Collider>());
         var shader=Shader.Find("Universal Render Pipeline/Lit");
         if(shader==null)shader=Shader.Find("Standard");
         if(shader!=null)
