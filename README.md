@@ -235,3 +235,26 @@ V12 creates a blue transit beacon inside the tunnel, unlocked only after recover
 Installation: back up Prototype.unity with File > Save As and reopen the original. Quit Unity, run `bash ~/Downloads/sync-lastsignal-mac.sh`, reopen Prototype and confirm zero red errors. Ensure V6 exists. Select **Last Signal > Upgrade Scene - V12 Chapter 2 Transition** once, save, and Play. Collect work order, use Echo relay to unlock tunnel gate, recover recording, approach blue beacon near x=-3.65,z=41.3, press E. Verify scene does not reload, Chapter 2 title appears, arrival near radio station is safe, XP persists, movement works, and V8 radio reception advances the new objective. If the player is captured or loop expires, the original rewind still returns to the original spawn.
 
 For complete rollback, reload pre-V12 scene backup, or remove `V12 Chapter Transition` in edit mode. Code is pushed but is **not yet compiled or run inside Unity**.
+
+
+## V13 — Echo Gate Playability (focus on core fun)
+V13 fixes the gate's excessively precise timing. When an **actual recorded Echo** reaches the purple relay, it charges the red gate for **14 seconds**, leaving the player enough time to reach the gate and interact. The normal live player cannot charge the relay. A visible "GATE CHARGED ... PRESS E" HUD timer appears while the gate can be opened. The guided tutorial detects when the gate opens and advances the objective toward the purple recording inside the tunnel. Rewinding resets the gate and charge timer.
+
+**No scene-upgrade menu is needed:** V13 changes existing C# components that are already attached to the scene.
+
+### Installation
+1. Save a backup copy of the current Prototype scene and quit Unity.
+2. Run `bash ~/Downloads/sync-lastsignal-mac.sh`; reopen your project and existing scene. Do **not** regenerate the prototype.
+3. Check Unity Console for zero red compilation errors. Press Play, Enter to dismiss tutorial (if V10 installed).
+
+### Acceptance tests
+- Loop 1: pick up gold work order (E), stand on purple relay for 5 seconds, press T.
+- Loop 2: travel toward the gate while previous-loop Echo follows its recorded path.
+- When the **Echo**, not the player, reaches relay, the HUD should display a 14-second gate charge timer.
+- Press E at the red gate during charge. It should open.
+- Collect the purple recording inside. The guide should update to the next objective.
+- After rewinding again, gate should be closed, charge should be cleared.
+- If Echo never walked over plate, gate stays locked. Repeated E should not bypass evidence requirements.
+- Verify V11 XP, V12 chapter transit, V5 Watcher and audio still work.
+
+**Status:** Committed code, not Unity-compiled or runtime tested. The first connected puzzle/transition needs external playtesting before expanding gameplay further.
