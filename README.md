@@ -94,3 +94,7 @@ V5 is a small tension encounter added **on top of your existing scene**. It does
 To remove V5, stop Play mode, delete the `V5 Stalker Thriller` GameObject in the Hierarchy, and save. Keep the committed source files; they're inert if not attached.
 
 This is still a procedural character proxy, not a fully animated enemy or cinematic stealth AI. The V5 scripts are committed but **not yet compiled or playtested in the target Unity Editor**.
+
+
+## Audio listener repair (Unity 6.6)
+If Console reports "There are no audio listeners in the scene", stop Play mode, save and quit Unity, and run the Mac sync script. Open Prototype.unity and choose **Last Signal > Fix Audio Listener - Current Scene**, then save and test. This ensures the player camera has exactly one enabled AudioListener and disables any competing enabled listeners. Future scene generation also adds the listener automatically. Do **not** regenerate the Prototype just to fix audio. Change Game view Scale from 2x to 1x if phone text is cropped while testing. Test audio with macOS output unmuted, Game tab focused, and Unity's Game-view Mute Audio toggle off.
