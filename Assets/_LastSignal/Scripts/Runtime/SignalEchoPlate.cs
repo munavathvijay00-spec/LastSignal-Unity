@@ -11,6 +11,7 @@ namespace LastSignal
         public SignalWorld world;
         public float detectionRadius = 1.6f;
         public bool active { get; private set; }
+        public bool EverActivated { get; private set; }
         private Renderer indicator;
         private Color idleColor = new Color(.35f, .14f, .42f);
         private Color activeColor = new Color(.1f, .9f, .85f);
@@ -27,9 +28,16 @@ namespace LastSignal
             if (nowActive != active) SetState(nowActive);
         }
 
+        public void ResetForNewLoop()
+        {
+            EverActivated = false;
+            SetState(false);
+        }
+
         void SetState(bool value)
         {
             active = value;
+            if (value) EverActivated = true;
             if (indicator != null)
                 indicator.material.color = active ? activeColor : idleColor;
             if (value && world != null)
