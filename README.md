@@ -270,3 +270,13 @@ To install: save a **backup copy of Prototype.unity**; close Unity; run `bash ~/
 **Rollback:** Stop Play mode; delete the V14 Cinematic Chapter One root, then save. No V14 objects remain elsewhere in the scene.
 
 **Honest status:** GitHub source is committed but Unity compilation, audio hardware, camera composition, and complete gameplay flow have not yet been independently verified. This is a cinematic-feedback pass, not filmed cutscenes, voice-acting, final art, or a completed chapter.
+
+
+## Focused gameplay upgrade: Watcher Tension Feedback
+The central premise is now clearer: **use your recorded Echo to distract the Watcher and escape**, not merely collect evidence. This optional, reversible scene addition creates Watcher-arrival countdowns, danger warnings, an Echo-distraction announcement, and lightweight generated stings. It does not change enemies, XP, timing or scenery.
+
+Install: back up current Prototype scene; quit Unity; run `bash ~/Downloads/sync-lastsignal-mac.sh`; reopen Prototype; check zero red Console compilation errors. Confirm V5 Stalker exists. Choose **Last Signal > Improve Gameplay - Watcher Tension** once and save.
+
+Test: after entering Play and dismissing the guide, wait near the Watcher until it becomes active, hear/see alert, rewind to recreate an Echo near the Watcher, and verify the distraction announcement. Compare whether a newcomer understands how their previous path influences survival. If silent, verify Game view Mute Audio and the camera AudioListener. Remove `Watcher Tension Feedback` in Edit mode to roll back.
+
+**Status:** Committed source only; not compiled or tested in Unity. No claims of real voice acting, advanced pathfinding, or completed cinematic production.
