@@ -22,6 +22,8 @@ namespace LastSignal
         public float patrolSpeed = 1.1f;
         public float pursuitSpeed = 2.65f;
         public float searchSeconds = 3f;
+        public float obstacleProbeDistance = 1.2f;
+        private int preferredSide = 1;
         private float lastSightTime = -100f;
         private Vector3 lastSeenPosition;
         public Vector3 patrolA = new Vector3(2.8f, 1.0f, 18f);
@@ -35,6 +37,33 @@ namespace LastSignal
         {
             return !Physics.Linecast(transform.position + Vector3.up * .25f,
                 destination + Vector3.up * .25f, ~0, QueryTriggerInteraction.Ignore);
+        }
+
+        // Local avoidance only: tries the open side around a blocking object.
+        // NavMesh is still needed for guaranteed paths through a complex town.
+        private Vector3 FindSteeringDirection(Vector3 desired)
+        {
+            if (CanStep(desired)) return desired;
+            float[] angles = { 35f, 70f, 105f, 145f };
+            for (int i = 0; i < angles.Length; i++)
+            {
+                Vector3 primary = Quaternion.Euler(0, preferredSide * angles[i], 0) * desired;
+                if (CanStep(primary)) return primary;
+                Vector3 secondary = Quaternion.Euler(0, -preferredSide * angles[i], 0) * desired;
+                if (CanStep(secondary))
+                {
+                    preferredSide *= -1;
+                    return secondary;
+                }
+            }
+            return Vector3.zero;
+        }
+
+        private bool CanStep(Vector3 direction)
+        {
+            Vector3 origin = transform.position + Vector3.up * .55f;
+            return !Physics.Raycast(origin, direction, obstacleProbeDistance,
+                ~0, QueryTriggerInteraction.Ignore);
         }
 
         private void Start()
@@ -56,6 +85,7 @@ namespace LastSignal
                 distractedUntil = 0f;
                 wasEchoNear = false;
                 lastSightTime = -100f;
+                preferredSide = 1;
             }
 
             if (world.elapsed < activateAfterSeconds)
@@ -94,10 +124,13 @@ namespace LastSignal
 
             if (direction.sqrMagnitude > .001f)
             {
-                if (HasClearPath(transform.position + direction.normalized * Mathf.Min(step + .4f, direction.magnitude)))
-                    transform.position += direction.normalized * Mathf.Min(step, direction.magnitude);
-                transform.rotation = Quaternion.Slerp(transform.rotation,
-                    Quaternion.LookRotation(direction.normalized), Time.deltaTime * 5f);
+                Vector3 heading = FindSteeringDirection(direction.normalized);
+                if (heading.sqrMagnitude > .01f)
+                {
+                    transform.position += heading * Mathf.Min(step, direction.magnitude);
+                    transform.rotation = Quaternion.Slerp(transform.rotation,
+                        Quaternion.LookRotation(heading), Time.deltaTime * 5f);
+                }
             }
 
             if (!chasing && direction.sqrMagnitude < .25f)
