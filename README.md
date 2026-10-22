@@ -118,3 +118,21 @@ While not in Play mode, delete the `V6 Expanded Town` root object. V6 also expan
 
 ### Boundaries and production quality
 Map-size increase does not by itself provide 50-hour replayability or final visuals. The new geometry is still intentionally stylized blockout art. Runtime fps, collision, path continuity, AI behavior, material rendering and performance on Mac must be verified within Unity before calling it a completed milestone. Do not regenerate Prototype after upgrading: doing so destroys local scene changes.
+
+
+## V7 Cinematic Landmarks — Art Direction Pass
+V7 adds a stronger visual identity to the expanded world with tunnel support ribs, emergency strips, utility pipes, a radio-station van and analyzer, a checkpoint gantry and vehicle, and a petrol-station canopy with lit fixtures and supply crates. These objects are **procedural placeholders**, not finished textured models.
+
+### Apply safely
+1. Save a separate copy of the current Prototype scene.
+2. Quit Unity and run `bash ~/Downloads/sync-lastsignal-mac.sh`.
+3. Reopen Prototype.unity, confirm V6 Expanded Town is present and Console has no red errors.
+4. Select **Last Signal > Upgrade Scene - V7 Cinematic Landmarks** once.
+5. Save the scene. Test in Game view by visiting the tunnel, radio station, checkpoint, and service station.
+6. Confirm that the Echo gate, Watcher, player movement, time-loop resets and clues still function.
+
+### Rollback
+Stop Play mode and delete **V7 Cinematic Landmarks** from the Hierarchy. V7 only adds props and adjusts camera distance and scene fog. To fully revert fog / camera settings, restore your pre-V7 scene backup.
+
+### Known limits
+Props currently lack colliders intentionally to avoid blocking routes. Therefore they are scenic and not interactive obstacles. TextMesh signs may need position/rotation tuning based on actual Game view. Source was committed but has **not been compiled or run in Unity**; report any Console errors before testing further.
