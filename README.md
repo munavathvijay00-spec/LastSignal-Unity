@@ -258,3 +258,15 @@ V13 fixes the gate's excessively precise timing. When an **actual recorded Echo*
 - Verify V11 XP, V12 chapter transit, V5 Watcher and audio still work.
 
 **Status:** Committed code, not Unity-compiled or runtime tested. The first connected puzzle/transition needs external playtesting before expanding gameplay further.
+
+
+## V14 — Cinematic Chapter One (focused demo polish)
+V14 adds scripted title/caption moments and a short procedural sting at four actual gameplay events: the opening call, first recorded Echo relay activation, temporal gate opening, and recovering the voice recording. It also presents a rewind beat. It reuses current scene state, and does **not** alter puzzles, map geometry, movement, XP, or endings.
+
+To install: save a **backup copy of Prototype.unity**; close Unity; run `bash ~/Downloads/sync-lastsignal-mac.sh`; reopen the current Prototype scene; verify zero red compilation errors; run **Last Signal > Upgrade Scene - V14 Cinematic Chapter One** once; save and Play. V10 guided onboarding is optional; if present, cinematic captions stay hidden while the help overlay is visible. V14 auto-installs its own AudioSource. For audio verification, ensure player camera has exactly one AudioListener, and Unity Game view audio is not muted.
+
+**Acceptance:** After starting, opening caption appears; after pressing T on the first loop, the rewind caption appears; when the blue Echo steps onto purple relay, a relay caption and sound occur; opening the temporal gate displays breach caption; recovering the recording triggers the reveal caption. Ensure captions do not remain stuck, duplicate forever, or obscure interaction prompts. Rewind must continue working normally. Compare game view at 1x and test the full Echo-to-gate sequence.
+
+**Rollback:** Stop Play mode; delete the V14 Cinematic Chapter One root, then save. No V14 objects remain elsewhere in the scene.
+
+**Honest status:** GitHub source is committed but Unity compilation, audio hardware, camera composition, and complete gameplay flow have not yet been independently verified. This is a cinematic-feedback pass, not filmed cutscenes, voice-acting, final art, or a completed chapter.
