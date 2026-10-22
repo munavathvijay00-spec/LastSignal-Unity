@@ -25,11 +25,13 @@ namespace LastSignal
         private Transform relay, gate, recording;
         private SignalEchoPlate relayComponent;
         private SignalDoor gateComponent;
+        private SignalStalker stalker;
 
         void Start()
         {
             if (!world) world = FindFirstObjectByType<SignalWorld>();
             if (!guide) guide = FindFirstObjectByType<SignalGuide>();
+            stalker = FindFirstObjectByType<SignalStalker>();
             var a=GameObject.Find("Echo relay plate"); if(a) {relay=a.transform; relayComponent=a.GetComponent<SignalEchoPlate>();}
             var b=GameObject.Find("Maintenance gate"); if(b) {gate=b.transform; gateComponent=b.GetComponent<SignalDoor>();}
             var c=GameObject.Find("Hidden transmitter recording"); if(c) recording=c.transform;
@@ -54,6 +56,8 @@ namespace LastSignal
             if (world.loopNumber>1) Award("rewind",50,"FIRST REWIND");
             if (relayComponent != null && relayComponent.EverActivated)
                 Award("relay",75,"ECHO SYNCHRONIZED");
+            if (stalker != null && stalker.SuccessfulDiversions > 0)
+                Award("watcher_decoy",120,"OUTSMARTED THE WATCHER");
             if (gateComponent != null && gateComponent.EverOpened)
                 Award("gate",75,"TEMPORAL GATE CLEARED");
             if (world.Knows("recording"))
