@@ -38,7 +38,9 @@ public static class SignalPrototypeBuilder
         var cam=new GameObject("Player Camera");
         cam.transform.SetParent(player.transform,false);
         cam.transform.localPosition=new Vector3(0,.65f,0);cam.tag="MainCamera";
-        var camera=cam.AddComponent<Camera>();controller.playerCamera=camera;
+        var camera=cam.AddComponent<Camera>();
+        cam.AddComponent<AudioListener>();
+        controller.playerCamera=camera;
         var flashlight=cam.AddComponent<Light>();flashlight.type=LightType.Spot;
         flashlight.range=20;flashlight.spotAngle=55;flashlight.intensity=5;
         controller.flashlight=flashlight;
