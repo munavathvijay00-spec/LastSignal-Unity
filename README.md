@@ -227,3 +227,11 @@ V11 introduces an additive in-session Echo rank system. XP is awarded **once** p
 10. Test at 1x Game scale and check Console for repeating runtime exceptions.
 
 V11 upgrades player feedback and progression **only**; it does not yet create multiple completed Unity levels, persistent player accounts, combat skill trees or production art. Source committed; pending Unity compilation and playtesting.
+
+
+## V12 Chapter 2 playable transition
+V12 creates a blue transit beacon inside the tunnel, unlocked only after recovering the original hidden voice recording. It moves the player (without scene reload, keeping clues and XP) to the expanded radio-station district and displays a Chapter 2 title/objective. With V8 installed, collecting the radio fragment updates the chapter objective to the checkpoint. It is **one connected level transition**, not yet a complete separately built second level.
+
+Installation: back up Prototype.unity with File > Save As and reopen the original. Quit Unity, run `bash ~/Downloads/sync-lastsignal-mac.sh`, reopen Prototype and confirm zero red errors. Ensure V6 exists. Select **Last Signal > Upgrade Scene - V12 Chapter 2 Transition** once, save, and Play. Collect work order, use Echo relay to unlock tunnel gate, recover recording, approach blue beacon near x=-3.65,z=41.3, press E. Verify scene does not reload, Chapter 2 title appears, arrival near radio station is safe, XP persists, movement works, and V8 radio reception advances the new objective. If the player is captured or loop expires, the original rewind still returns to the original spawn.
+
+For complete rollback, reload pre-V12 scene backup, or remove `V12 Chapter Transition` in edit mode. Code is pushed but is **not yet compiled or run inside Unity**.
