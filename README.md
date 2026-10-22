@@ -201,3 +201,11 @@ Users should not have to guess the rules. V10 adds a pause-on-opening tutorial (
 
 ### QA limitations
 These scripts have been committed but **not yet compiled or tested within the user's Unity installation**. The procedural sounds are design placeholders (not voice acting or layered professional ambience), and the tutorial is OnGUI-based. If an Editor error occurs, do not exit Safe Mode until the red error has been fixed. If V10 causes problems, stop Play mode, delete the `V10 Guided Experience` root, and reload the saved pre-V10 scene copy for full rollback.
+
+
+## V10.1 — Tutorial stability and pre-demo QA
+This patch fixes two guided-intro usability problems: **the regular phone/HUD no longer covers the tutorial**, and opening the tutorial unlocks the mouse cursor. It adds a read-only **Last Signal > Run Scene Health Check** menu that flags missing player/spawn references, missing or duplicate AudioListeners, absent off-road collision, and an unlinked Echo gate; missing guided UI/audio are warnings. The health check does not test actual gameplay, performance or standalone build.
+
+**Apply:** Save scene, quit Unity, run `bash ~/Downloads/sync-lastsignal-mac.sh`, reopen existing Prototype scene. Check Console for zero red compile errors, select **Last Signal > Run Scene Health Check**. If health passes, press Play and verify the tutorial alone appears; Enter closes it and unlocks gameplay, H reopens it, Tab opens the phone after closing tutorial, and the audio chime/drone works. Never regenerate Prototype to apply these fixes.
+
+**Status:** GitHub source committed; requires Unity-side compilation and playtesting.
