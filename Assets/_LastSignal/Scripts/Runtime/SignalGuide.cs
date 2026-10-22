@@ -15,6 +15,7 @@ namespace LastSignal
         public Transform gate;
         public Transform receiver;
         private bool showHelp = true;
+        public bool IsHelpOpen => showHelp;
         private GUIStyle heading, text, hint, marker;
         private Texture2D backdrop;
         private int lastLoop;
@@ -54,6 +55,8 @@ namespace LastSignal
         {
             if (world != null) world.enabled = !paused;
             if (world != null && world.player != null) world.player.enabled = !paused;
+            Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = paused;
         }
 
         void OnDisable()
