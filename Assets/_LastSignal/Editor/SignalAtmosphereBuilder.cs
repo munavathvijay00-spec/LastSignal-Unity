@@ -39,7 +39,9 @@ public static class SignalAtmosphereBuilder
         }
 
         // Surround the existing prototype with a forested, unlit landscape.
-        Block("Ground beyond town", anchor, new Vector3(0,-.48f,18),new Vector3(130,.4f,115),new Color(.035f,.06f,.055f));
+        var walkableTerrain = Block("Ground beyond town", anchor, new Vector3(0,-.48f,18),new Vector3(130,.4f,115),new Color(.035f,.06f,.055f));
+        // Walking outside the roadway must not drop the player through decoration geometry.
+        walkableTerrain.AddComponent<BoxCollider>();
         Block("Left shoulder",anchor,new Vector3(-7.9f,-.13f,18),new Vector3(3,.15f,65),new Color(.11f,.11f,.115f));
         Block("Right shoulder",anchor,new Vector3(7.9f,-.13f,18),new Vector3(3,.15f,65),new Color(.11f,.11f,.115f));
 
