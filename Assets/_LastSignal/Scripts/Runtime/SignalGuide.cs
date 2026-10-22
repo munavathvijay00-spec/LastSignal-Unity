@@ -70,6 +70,7 @@ namespace LastSignal
         {
             if (!world) return "Find the work order near the tunnel.";
             if (!world.Knows("code")) return "STEP 1: Find the GOLD work order beside the road. Aim at it and press E.";
+            if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
             if (world.loopNumber == 1) return "STEP 2: Stand on the PURPLE relay for 5 seconds, then press T. Your Echo replays that route.";
             if (!world.Knows("recording")) return "STEP 3: Walk to the gate in loop 2. The BLUE Echo charges it for 14 seconds. Aim at the gate and press E.";
@@ -79,7 +80,8 @@ namespace LastSignal
         Transform CurrentTarget()
         {
             if (!world || !world.Knows("code")) return clue;
-            if (tunnelDoor != null && tunnelDoor.IsOpen && !world.Knows("recording")) return receiver;
+            if (world.Knows("recording")) { var next=GameObject.Find("Chapter 2 Transit Beacon"); return next ? next.transform : receiver; }
+            if (tunnelDoor != null && tunnelDoor.IsOpen) return receiver;
             if (world.loopNumber == 1) return relay;
             if (!world.Knows("recording")) return gate;
             return receiver;
