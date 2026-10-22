@@ -9,7 +9,8 @@ namespace LastSignal {
   public int loopNumber{get;private set;}=1;
   public float elapsed{get;private set;}
   public bool ended{get;private set;}
-  public string endingTitle{get;private set;}="",endingDescription{get;private set;}="";
+  public string endingTitle { get; private set; } = "";
+  public string endingDescription { get; private set; } = "";
   public string status="11:47 PM — Unknown caller: Don't enter the tunnel.";
   readonly HashSet<string> knowledge=new HashSet<string>();
   readonly List<Vector3> currentPath=new List<Vector3>();
