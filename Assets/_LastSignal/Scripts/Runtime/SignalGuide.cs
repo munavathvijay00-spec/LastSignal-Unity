@@ -28,6 +28,7 @@ namespace LastSignal
             if (!gate) { var o = GameObject.Find("Maintenance gate"); if (o) gate = o.transform; }
             if (!receiver) { var o = GameObject.Find("Hidden transmitter recording"); if (o) receiver = o.transform; }
             lastLoop = world ? world.loopNumber : 1;
+            SetTutorialPause(true);
             backdrop = new Texture2D(1, 1);
             backdrop.SetPixel(0, 0, new Color(.015f, .03f, .055f, .94f));
             backdrop.Apply();
@@ -36,14 +37,28 @@ namespace LastSignal
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.H)) showHelp = !showHelp;
+            if (Input.GetKeyDown(KeyCode.H)) { showHelp = !showHelp; SetTutorialPause(showHelp); }
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
                 showHelp = false;
+                SetTutorialPause(false);
+            }
             if (world && world.loopNumber != lastLoop)
             {
                 lastLoop = world.loopNumber;
                 // Don't force instructions back over the player's screen after every rewind.
             }
+        }
+
+        void SetTutorialPause(bool paused)
+        {
+            if (world != null) world.enabled = !paused;
+            if (world != null && world.player != null) world.player.enabled = !paused;
+        }
+
+        void OnDisable()
+        {
+            SetTutorialPause(false);
         }
 
         string CurrentObjective()
