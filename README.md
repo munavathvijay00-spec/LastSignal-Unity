@@ -163,3 +163,15 @@ V8 adds **three recoverable frequency fragments** near the service station, radi
 Stop Play mode and remove the **V8 Signal Investigation** root from Hierarchy, then save. This removes only V8 devices. The menu is idempotent and does not regenerate the base scene.
 
 **Status:** Source committed to GitHub; requires Unity compilation and actual gameplay verification before marking it complete. V8 receivers are simple interactive terminal objects, not final model art.
+
+
+## V9 Art Quality Pass — larger-world visual cohesion
+V9 creates persistent Unity materials and a low-poly pine mesh as project assets under `Assets/_LastSignal/Generated/V9/`. It adds sloped roof facades, framed doors/windows, sign lights, a forest pass, guardrails and tunnel braces. All V9 additions are grouped under `V9 Art Quality Pass` for easy removal.
+
+**Setup:** Back up Prototype scene via File > Save As; close Unity; run `bash ~/Downloads/sync-lastsignal-mac.sh`; reopen **Prototype.unity** with the V6 Expanded Town already installed; check for red errors; run **Last Signal > Upgrade Scene - V9 Art Quality Pass** only once; save; test in Game view. The menu is intentionally guarded if V9 already exists.
+
+**Check:** confirm the existing player can walk, the Echo relay still activates, Watcher still follows, and V8 receivers and endings still work if installed. Inspect trees in Game view (not only Scene view) and verify no pink/missing materials or console exceptions. V9 adds a 45-FPS runtime cap to reduce unnecessary GPU usage while playtesting on a Mac. It is **source-only and not yet verified by Unity compilation**.
+
+**Rollback:** Remove `V9 Art Quality Pass` while not playing, then save. V9 also adjusts fog and camera far clip, so restore your pre-upgrade scene copy for a complete rollback. Generated material and mesh assets can remain safely unused; don't delete in-use assets while the scene is open.
+
+**Design reality:** V9 is a consistent stylized geometric pass, not a ready-made AAA-quality asset package. It improves silhouettes and construction but the high-quality milestone still requires authored textures, lighting iteration, animated characters, sound, and independent playtesting.
