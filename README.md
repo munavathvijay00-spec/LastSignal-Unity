@@ -39,3 +39,20 @@ The generator also registers the prototype scene in Build Settings.
 - Replace the generated primitive environment and OnGUI with polished art and UI.
 - Add atmosphere, audio, an enemy encounter, better clues, proper narrative sequencing, accessibility and save/load.
 - Test both macOS and Windows builds before hackathon judging.
+
+
+## V3 Thriller Upgrade (Unity 6.6)
+V3 adds a responsive smartphone-style HUD, opening alerts, a timed blackout, improved nighttime visibility, road reflectors, and tiered pine silhouettes. It enhances your existing scene; it does not replace the Echo puzzle.
+
+1. **Save and quit Unity.**
+2. Run `bash ~/Downloads/sync-lastsignal-mac.sh`; choose your existing Unity project's root folder.
+3. Reopen the Unity project and verify there are no **red Console errors**.
+4. Open the **already-generated** `Prototype.unity` scene.
+5. Click **Last Signal > Upgrade Existing Scene - V3 Thriller** exactly once.
+6. Save the scene (Cmd+S), then click Play and switch to Game view.
+7. Use Tab to inspect the redesigned phone. At about 22 seconds a call alert appears; at about 47 seconds the emergency lights begin flickering. Use T once to test Echo rewind.
+
+**Do not use Generate Playable Prototype after applying V3**: that command rebuilds the baseline scene and discards local scene enhancements.
+
+### V3 constraints and testing
+These are committed source changes, but **not yet compiled or game-tested** in the user's Unity Editor. The visual improvements remain procedural stand-in art; models, sound and enemy behavior are still pending. The existing V2 environment should be installed before the V3 upgrade; if V2 is absent, the script skips tree replacement. The UI currently uses legacy OnGUI as an interim solution, not a production UI Toolkit implementation.
