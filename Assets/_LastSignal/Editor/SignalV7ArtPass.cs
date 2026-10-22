@@ -92,7 +92,7 @@ public static class SignalV7ArtPass
             cone.name="Checkpoint traffic cone "+i;
             cone.transform.SetParent(root);cone.transform.position=new Vector3(-4.8f+i*2f,.15f,117);
             cone.transform.localScale=new Vector3(.34f,.36f,.34f);
-            cone.GetComponent<Renderer>().sharedMaterial=Material(new Color(.87f,.28f,.08f));
+            cone.GetComponent<Renderer>().sharedMaterial=MakeMaterial(new Color(.87f,.28f,.08f));
             Object.DestroyImmediate(cone.GetComponent<Collider>());
         }
 
@@ -148,7 +148,7 @@ public static class SignalV7ArtPass
                 wheel.transform.position=at+new Vector3(s*1.2f,.35f,f*1.35f);
                 wheel.transform.rotation=Quaternion.Euler(0,0,90);
                 wheel.transform.localScale=new Vector3(.4f,.14f,.4f);
-                wheel.GetComponent<Renderer>().sharedMaterial=Material(new Color(.045f,.05f,.06f));
+                wheel.GetComponent<Renderer>().sharedMaterial=MakeMaterial(new Color(.045f,.05f,.06f));
                 Object.DestroyImmediate(wheel.GetComponent<Collider>());
             }
     }
@@ -183,11 +183,11 @@ public static class SignalV7ArtPass
         var obj=GameObject.CreatePrimitive(PrimitiveType.Cube);
         obj.name=name;obj.transform.SetParent(root);obj.transform.position=pos;
         obj.transform.localScale=scale;
-        obj.GetComponent<Renderer>().sharedMaterial=Material(color);
+        obj.GetComponent<Renderer>().sharedMaterial=MakeMaterial(color);
         Object.DestroyImmediate(obj.GetComponent<Collider>());
         return obj;
     }
-    static Material Material(Color color)
+    static Material MakeMaterial(Color color)
     {
         var mat=new Material(shader);mat.color=color;
         return mat;
