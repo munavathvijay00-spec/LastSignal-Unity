@@ -11,10 +11,12 @@ namespace LastSignal
 
         private bool phoneOpen;
         private SignalGuide guide;
+        private SignalDoor temporalGate;
 
         private void Start()
         {
             guide = FindFirstObjectByType<SignalGuide>();
+            temporalGate = FindFirstObjectByType<SignalDoor>();
         }
         private GUIStyle titleStyle, bodyStyle, smallStyle, promptStyle, phoneTitle, phoneBody, overlayStyle;
         private Texture2D panelTexture, phoneTexture, accentTexture, blackTexture;
@@ -134,6 +136,16 @@ namespace LastSignal
             if (world != null && (world.Knows("signal_radio") || world.Knows("signal_checkpoint") || world.Knows("signal_service")))
                 objective = "COLLECT 3 SIGNALS AND DECODE SOURCE";
             GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  " + objective, smallStyle);
+            if (temporalGate != null && temporalGate.requireEcho &&
+                !temporalGate.IsOpen && temporalGate.RemainingWindow > 0.05f)
+            {
+                GUI.DrawTexture(new Rect(w/2f-170, 20, 340, 54), panelTexture);
+                var chargedStyle = new GUIStyle(promptStyle);
+                chargedStyle.alignment = TextAnchor.MiddleCenter;
+                GUI.Label(new Rect(w/2f-165, 24, 330, 45),
+                    "GATE CHARGED   " + Mathf.CeilToInt(temporalGate.RemainingWindow) +
+                    "s   →   PRESS E", chargedStyle);
+            }
 
             if (!phoneOpen)
             {
