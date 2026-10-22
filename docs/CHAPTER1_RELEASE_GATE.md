@@ -25,3 +25,10 @@ No automated Unity compilation or actual game run was performed from ChatGPT. No
 
 ## Scope policy
 Freeze map expansion and cosmetic version increments until the above full run completes without blocking problems. Next priority is game test evidence, not speculative feature additions.
+
+
+## Follow-on stability patch (2026-10-22)
+- Chapter director now returns to Chapter 1 after any world rewind, matching physical teleport back to original spawn. This prevents the soft-lock where the player is at the town entrance but the director still says Chapter 2 is active.
+- Tutorial objectives now change to radio station/checkpoint guidance when Chapter 2 is active; stale tunnel waypoint is suppressed.
+- Regression test: complete Chapter 1, take blue beacon to Chapter 2, allow a 180-second rewind (or trigger a capture), confirm Chapter 1 starts again at spawn with persistent evidence, and confirm blue beacon can take the player to Chapter 2 again.
+- Test V8's terminal and any ending separately; no release claim until this sequence and standalone build are observed in Unity.
