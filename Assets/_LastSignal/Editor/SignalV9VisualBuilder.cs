@@ -234,8 +234,8 @@ public static class SignalV9VisualBuilder
             vertices[i+1]=new Vector3(Mathf.Cos(a),0,Mathf.Sin(a));
             uvs[i+1]=new Vector2(i/(float)sides,0);
             int j=i*6;
-            triangles[j]=0;triangles[j+1]=1+i;triangles[j+2]=1+(i+1)%sides;
-            triangles[j+3]=sides+1;triangles[j+4]=1+(i+1)%sides;triangles[j+5]=1+i;
+            triangles[j]=0;triangles[j+1]=1+(i+1)%sides;triangles[j+2]=1+i;
+            triangles[j+3]=sides+1;triangles[j+4]=1+i;triangles[j+5]=1+(i+1)%sides;
         }
         uvs[0]=new Vector2(.5f,1f);
         Mesh mesh=new Mesh();
