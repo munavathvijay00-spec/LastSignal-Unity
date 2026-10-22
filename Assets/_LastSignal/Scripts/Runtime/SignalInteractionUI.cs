@@ -10,6 +10,12 @@ namespace LastSignal
         public float range = 3.5f;
 
         private bool phoneOpen;
+        private SignalGuide guide;
+
+        private void Start()
+        {
+            guide = FindFirstObjectByType<SignalGuide>();
+        }
         private GUIStyle titleStyle, bodyStyle, smallStyle, promptStyle, phoneTitle, phoneBody, overlayStyle;
         private Texture2D panelTexture, phoneTexture, accentTexture, blackTexture;
         private bool initialized;
@@ -55,6 +61,7 @@ namespace LastSignal
 
         private void Update()
         {
+            if (guide != null && guide.IsHelpOpen) return;
             if (world != null && world.ended)
             {
                 if (Input.GetKeyDown(KeyCode.R)) world.RestartGame();
@@ -95,6 +102,7 @@ namespace LastSignal
 
         private void OnGUI()
         {
+            if (guide != null && guide.IsHelpOpen) return;
             Initialize();
             float w = Screen.width, h = Screen.height;
             float scale = Mathf.Min(w / 1280f, h / 720f);
