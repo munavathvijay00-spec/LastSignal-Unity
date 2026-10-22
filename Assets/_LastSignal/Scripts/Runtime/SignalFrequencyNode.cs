@@ -16,12 +16,17 @@ namespace LastSignal
         public Color recoveredColor = new Color(.12f, .91f, .82f);
         public SignalWorld world;
 
+        private MaterialPropertyBlock properties;
+        private bool? lastRecovered;
+
         private void Update()
         {
             if (indicator == null || world == null) return;
-            Color target = world.Knows(evidenceId) ? recoveredColor : unreadColor;
-            // MaterialPropertyBlock avoids creating a new material on every update.
-            MaterialPropertyBlock properties = new MaterialPropertyBlock();
+            bool recovered = world.Knows(evidenceId);
+            if (lastRecovered.HasValue && lastRecovered.Value == recovered) return;
+            lastRecovered = recovered;
+            Color target = recovered ? recoveredColor : unreadColor;
+            if (properties == null) properties = new MaterialPropertyBlock();
             indicator.GetPropertyBlock(properties);
             properties.SetColor("_BaseColor", target);
             properties.SetColor("_Color", target);
