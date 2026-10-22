@@ -47,6 +47,19 @@ public static class SignalSceneHealthCheck
             Debug.LogError("[LAST SIGNAL QA] Gate requires an Echo but no plate is assigned");fail++;
         }
 
+        var stalker=Object.FindFirstObjectByType<SignalStalker>();
+        if(stalker==null) Debug.LogWarning("[LAST SIGNAL QA] Watcher missing: stealth encounter cannot be tested");
+        else
+        {
+            if(stalker.world==null || stalker.target==null)
+            {
+                Debug.LogError("[LAST SIGNAL QA] Watcher missing world or player target reference");
+                fail++;
+            }
+            if(stalker.obstacleProbeDistance<=.1f)
+                Debug.LogWarning("[LAST SIGNAL QA] Watcher obstacle probe too short for reliable avoidance");
+        }
+
         if(Object.FindFirstObjectByType<SignalGuide>()==null)
             Debug.LogWarning("[LAST SIGNAL QA] Guided introduction not installed");
         if(Object.FindFirstObjectByType<SignalSoundscape>()==null)
