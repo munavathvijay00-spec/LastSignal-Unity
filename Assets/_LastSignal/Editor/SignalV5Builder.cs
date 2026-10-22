@@ -67,6 +67,9 @@ public static class SignalV5Builder
         stalker.world = world;
         stalker.target = world.player.transform;
         stalker.warningEye = redLight;
+        var pulse = root.AddComponent<SignalThreatAudio>();
+        pulse.stalker = stalker;
+        pulse.world = world;
 
         // Main road remains completely accessible. An interactive landmark tells the player danger is ahead.
         var messageBoard = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -83,7 +86,7 @@ public static class SignalV5Builder
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveOpenScenes();
         EditorUtility.DisplayDialog("LAST SIGNAL V5",
-            "Stalker encounter created. Begins 65 seconds into each timeline. Approach to trigger chase; being caught resets the loop. Test the current scene in Game view.", "OK");
+            "Stalker encounter and warning pulse created. Begins 65 seconds into each timeline. Approach to trigger chase; being caught resets the loop. Test the current scene in Game view.", "OK");
     }
 
     private static Material CreateMaterial(Color color)
