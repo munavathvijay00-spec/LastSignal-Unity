@@ -15,6 +15,7 @@ namespace LastSignal
         public float alertDistance = 9f;
         public float echoAttractionDistance = 13f;
         public float echoHoldSeconds = 5f;
+        public bool IsDistracted { get; private set; }
         private float distractedUntil;
         private bool wasEchoNear;
         public float catchDistance = 1.65f;
@@ -49,6 +50,7 @@ namespace LastSignal
 
             if (world.elapsed < activateAfterSeconds)
             {
+                IsDistracted = false;
                 if (warningEye != null) warningEye.enabled = false;
                 return;
             }
@@ -69,6 +71,7 @@ namespace LastSignal
             }
             wasEchoNear = echoInRange;
             bool distracted = echoExists && Time.time < distractedUntil;
+            IsDistracted = distracted;
             Vector3 destination = distracted ? echoPosition :
                 chasing ? target.position : (goingToB ? patrolB : patrolA);
             destination.y = transform.position.y;
