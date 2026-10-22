@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using LastSignal;
 
 /// <summary>
 /// V9 focused visual pass. Geometry and material assets are authored locally by Unity.
@@ -62,6 +63,7 @@ public static class SignalV9VisualBuilder
         pineMesh = LoadConeMesh();
         group = new GameObject("V9 Art Quality Pass").transform;
         Undo.RegisterCreatedObjectUndo(group.gameObject, "Create V9 art upgrade");
+        group.gameObject.AddComponent<SignalPerformanceCap>().targetFps = 45;
 
         // Hero arrival: recognizable roofs, windows and architecture close to the spawn.
         HouseFacade("Abandoned house restoration", new Vector3(-10f,0f,12f),7f,4f,7f);
