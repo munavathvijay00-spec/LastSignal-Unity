@@ -136,3 +136,30 @@ Stop Play mode and delete **V7 Cinematic Landmarks** from the Hierarchy. V7 only
 
 ### Known limits
 Props currently lack colliders intentionally to avoid blocking routes. Therefore they are scenic and not interactive obstacles. TextMesh signs may need position/rotation tuning based on actual Game view. Source was committed but has **not been compiled or run in Unity**; report any Console errors before testing further.
+
+
+## V8 Signal Investigation (gameplay across expanded town)
+V8 adds **three recoverable frequency fragments** near the service station, radio station, and checkpoint, plus a source-decoding terminal that requires all three. Fragments are stored using the existing in-memory timeline knowledge, so discoveries **survive loop resets**, but not quitting/restarting the game. Phone UI displays the count.
+
+### Install
+1. Back up Prototype.unity using **File > Save As** (then reopen the actual Prototype scene).
+2. Stop Play mode, quit Unity, and run `bash ~/Downloads/sync-lastsignal-mac.sh`.
+3. Reopen the game and confirm there are no red Console errors.
+4. Ensure **V6 Expanded Town** is present. V7 is optional; V8 is compatible without it.
+5. Choose **Last Signal > Upgrade Scene - V8 Signal Investigation**.
+6. Save and press Play. Open the phone (Tab) to view fragment progress.
+7. Locate the amber terminals at service station (around x=-29, z=48), radio station (x=17, z=84), and checkpoint (x=-17, z=110). Interact with E from close range.
+8. After collecting all three, decode at the cyan source terminal near x=7, z=91.
+
+### Acceptance checks
+- The three signal clues are discoverable and phone count changes from 0 to 3.
+- Resetting the loop preserves those clues; the final decoder requires all three.
+- Decode with 0–2 clues: no ending occurs, correct missing-clue count appears.
+- Decode with 3 clues: true-ending screen appears; R restarts the scene.
+- Old time-loop relay, existing two endings, Stalker and off-road collision still work.
+- No recurring red Console errors; review Game-view readability at 1x and thermal performance.
+
+### Rollback
+Stop Play mode and remove the **V8 Signal Investigation** root from Hierarchy, then save. This removes only V8 devices. The menu is idempotent and does not regenerate the base scene.
+
+**Status:** Source committed to GitHub; requires Unity compilation and actual gameplay verification before marking it complete. V8 receivers are simple interactive terminal objects, not final model art.
