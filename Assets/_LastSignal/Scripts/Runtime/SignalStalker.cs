@@ -28,6 +28,12 @@ namespace LastSignal
         private int observedLoop = -1;
         private float nextWarning;
 
+        private bool HasClearPath(Vector3 destination)
+        {
+            return !Physics.Linecast(transform.position + Vector3.up * .25f,
+                destination + Vector3.up * .25f, ~0, QueryTriggerInteraction.Ignore);
+        }
+
         private void Start()
         {
             transform.position = patrolA;
@@ -57,13 +63,13 @@ namespace LastSignal
 
             Vector3 delta = target.position - transform.position;
             delta.y = 0f;
-            bool chasing = delta.sqrMagnitude < alertDistance * alertDistance;
+            bool chasing = delta.sqrMagnitude < alertDistance * alertDistance && HasClearPath(target.position);
             Vector3 echoPosition;
             bool echoExists = world.TryGetEchoPosition(out echoPosition);
             Vector3 echoDelta = echoPosition - transform.position;
             echoDelta.y = 0f;
             bool echoInRange = echoExists && echoDelta.sqrMagnitude <
-                echoAttractionDistance * echoAttractionDistance;
+                echoAttractionDistance * echoAttractionDistance && HasClearPath(echoPosition);
             if (echoInRange && !wasEchoNear)
             {
                 distractedUntil = Time.time + echoHoldSeconds;
@@ -82,7 +88,8 @@ namespace LastSignal
 
             if (direction.sqrMagnitude > .001f)
             {
-                transform.position += direction.normalized * Mathf.Min(step, direction.magnitude);
+                if (HasClearPath(transform.position + direction.normalized * Mathf.Min(step + .4f, direction.magnitude)))
+                    transform.position += direction.normalized * Mathf.Min(step, direction.magnitude);
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                     Quaternion.LookRotation(direction.normalized), Time.deltaTime * 5f);
             }
