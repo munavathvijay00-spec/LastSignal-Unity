@@ -98,3 +98,23 @@ This is still a procedural character proxy, not a fully animated enemy or cinema
 
 ## Audio listener repair (Unity 6.6)
 If Console reports "There are no audio listeners in the scene", stop Play mode, save and quit Unity, and run the Mac sync script. Open Prototype.unity and choose **Last Signal > Fix Audio Listener - Current Scene**, then save and test. This ensures the player camera has exactly one enabled AudioListener and disables any competing enabled listeners. Future scene generation also adds the listener automatically. Do **not** regenerate the Prototype just to fix audio. Change Game view Scale from 2x to 1x if phone text is cropped while testing. Test audio with macOS output unmuted, Game tab focused, and Unity's Game-view Mute Audio toggle off.
+
+
+## V6 Expanded Town — bigger but still lightweight
+The **Last Signal > Upgrade Scene - V6 Expanded Town** menu command adds roads beyond the original tunnel, a radio-substation area, a checkpoint and a derelict roadside service station, with linked routes, terrain collision, forest dressing, and two optional lore pickups.
+
+### Installation
+1. **Save a copy of Prototype.unity** as a rollback snapshot (File > Save As), then return to the original Prototype scene. Stop Play mode and quit Unity.
+2. Run `bash ~/Downloads/sync-lastsignal-mac.sh`. If needed, first download that helper from the repository's tools directory.
+3. Reopen the project and the original **Prototype.unity** scene.
+4. Check Console for **zero red compilation errors**.
+5. Run **Last Signal > Upgrade Scene - V6 Expanded Town** once.
+6. Save with Cmd+S. Play and follow the north access road beyond the existing tunnel (the temporal gate must be opened first).
+7. Explore the radio station and checkpoint; inspect their gold note objects with E. They add optional persistent lore and are not required to finish the original puzzle.
+8. Test the edges of the expanded terrain and the returning route; confirm the player no longer falls. Verify the Stalker encounter, phone, Echo relay and original endings still work.
+
+### Safe rollback
+While not in Play mode, delete the `V6 Expanded Town` root object. V6 also expands the existing `Ground beyond town` size/position and moves V4 boundary objects, so **the reliable rollback is the scene copy** saved before upgrading, not simply removing the V6 root. The updater script backs up *code only*, not local scenes.
+
+### Boundaries and production quality
+Map-size increase does not by itself provide 50-hour replayability or final visuals. The new geometry is still intentionally stylized blockout art. Runtime fps, collision, path continuity, AI behavior, material rendering and performance on Mac must be verified within Unity before calling it a completed milestone. Do not regenerate Prototype after upgrading: doing so destroys local scene changes.
