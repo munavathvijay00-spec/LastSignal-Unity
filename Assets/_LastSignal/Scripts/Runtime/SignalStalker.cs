@@ -24,6 +24,7 @@ namespace LastSignal
         public float searchSeconds = 3f;
         public float obstacleProbeDistance = 1.2f;
         private int preferredSide = 1;
+        private static readonly float[] SteeringAngles = { 35f, 70f, 105f, 145f };
         private float lastSightTime = -100f;
         private Vector3 lastSeenPosition;
         public Vector3 patrolA = new Vector3(2.8f, 1.0f, 18f);
@@ -48,12 +49,11 @@ namespace LastSignal
         private Vector3 FindSteeringDirection(Vector3 desired)
         {
             if (CanStep(desired)) return desired;
-            float[] angles = { 35f, 70f, 105f, 145f };
-            for (int i = 0; i < angles.Length; i++)
+            for (int i = 0; i < SteeringAngles.Length; i++)
             {
-                Vector3 primary = Quaternion.Euler(0, preferredSide * angles[i], 0) * desired;
+                Vector3 primary = Quaternion.Euler(0, preferredSide * SteeringAngles[i], 0) * desired;
                 if (CanStep(primary)) return primary;
-                Vector3 secondary = Quaternion.Euler(0, -preferredSide * angles[i], 0) * desired;
+                Vector3 secondary = Quaternion.Euler(0, -preferredSide * SteeringAngles[i], 0) * desired;
                 if (CanStep(secondary))
                 {
                     preferredSide *= -1;
