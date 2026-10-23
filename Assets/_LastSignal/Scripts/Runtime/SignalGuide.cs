@@ -44,6 +44,7 @@ namespace LastSignal
 
         void Update()
         {
+            if (hud != null && hud.IsInspecting) return;
             if (Input.GetKeyDown(KeyCode.H)) { showHelp = !showHelp; SetTutorialPause(showHelp); }
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
             {
