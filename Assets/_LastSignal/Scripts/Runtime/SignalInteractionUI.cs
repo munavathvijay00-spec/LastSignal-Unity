@@ -17,6 +17,10 @@ namespace LastSignal
         public bool IsPhoneOpen { get { return phoneOpen; } }
         private SignalGuide guide;
         private SignalDoor temporalGate;
+        private int selectedEvidence;
+        private bool signatureLink;
+        private bool protocolLink;
+        private string linkFeedback = "Select two evidence records (1-3) to connect them.";
 
         private void Start()
         {
@@ -96,13 +100,46 @@ namespace LastSignal
                 Cursor.visible = phoneOpen;
             }
 
-            if (phoneOpen && world != null && !world.Knows("deduction") &&
-                world.Knows("code") && world.Knows("crew_dispatch") && world.Knows("protocol_card"))
+            if (phoneOpen && world != null && !world.Knows("deduction"))
             {
-                if (Input.GetKeyDown(KeyCode.Alpha2))
-                    world.Discover("deduction", "DEDUCTION VERIFIED: Your recorded Echo is the missing second operator. The gate must respond to a previous timeline.");
-                else if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha3))
-                    world.status = "CONTRADICTION: That answer does not explain the repeated signature and the Echo protocol.";
+                int index = Input.GetKeyDown(KeyCode.Alpha1) ? 1 :
+                    Input.GetKeyDown(KeyCode.Alpha2) ? 2 :
+                    Input.GetKeyDown(KeyCode.Alpha3) ? 3 : 0;
+                if (index > 0)
+                {
+                    string id = index == 1 ? "code" : index == 2 ? "crew_dispatch" : "protocol_card";
+                    if (!world.Knows(id))
+                        linkFeedback = "EVIDENCE MISSING. Explore the road and tunnel approach.";
+                    else if (selectedEvidence == 0)
+                    {
+                        selectedEvidence = index;
+                        linkFeedback = "Record " + index + " selected. Choose a second record.";
+                    }
+                    else
+                    {
+                        int lo = Mathf.Min(selectedEvidence, index);
+                        int hi = Mathf.Max(selectedEvidence, index);
+                        if (lo == 1 && hi == 2)
+                        {
+                            signatureLink = true;
+                            linkFeedback = "LINK VERIFIED: duplicate signature and impossible crew count.";
+                        }
+                        else if (lo == 2 && hi == 3)
+                        {
+                            protocolLink = true;
+                            linkFeedback = "LINK VERIFIED: second operator was a recorded Echo.";
+                        }
+                        else linkFeedback = "NO DIRECT LINK: These records lack a common event.";
+                        selectedEvidence = 0;
+                        if (signatureLink && protocolLink)
+                            world.Discover("deduction", "CASE SOLVED: The missing second operator was your recorded Echo. The gate will recognize it.");
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.Backspace))
+                {
+                    selectedEvidence = 0;
+                    linkFeedback = "Selection cleared.";
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.E) && !phoneOpen &&
@@ -251,13 +288,15 @@ namespace LastSignal
                 bool ready = world != null && world.Knows("code") &&
                     world.Knows("crew_dispatch") && world.Knows("protocol_card");
                 string deduction = world != null && world.Knows("deduction")
-                    ? "DEDUCTION SOLVED: YOUR PAST ECHO IS THE SECOND OPERATOR."
-                    : ready
-                      ? "WHO CAN ACTIVATE THE SEALED RELAY?\n[1] WATCHER    [2] RECORDED OPERATOR\n[3] MISSING TECHNICIAN"
-                      : "DEDUCTION LOCKED\nRecover the shift report, crew dispatch and Echo protocol.";
+                    ? "CASE SOLVED / RECORDED ECHO IS SECOND OPERATOR"
+                    : "1 SHIFT  +  2 DISPATCH  +  3 PROTOCOL" +
+                      "\\nMATCH TWO RECORDS: " +
+                      (signatureLink ? "SIGNATURE [OK]" : "SIGNATURE [ ]") +
+                      "  " + (protocolLink ? "ECHO [OK]" : "ECHO [ ]") +
+                      "\\n" + linkFeedback;
                 GUI.DrawTexture(new Rect(px + 23, py + 395, 354, 104), panelTexture);
                 GUI.Label(new Rect(px + 34, py + 403, 332, 93), deduction,
-                    new GUIStyle(smallStyle) { fontSize = 14, wordWrap = true });
+                    new GUIStyle(smallStyle) { fontSize = 13, wordWrap = true });
                 CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
             }
             GUI.matrix = previousMatrix;
