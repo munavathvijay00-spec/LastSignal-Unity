@@ -16,6 +16,7 @@ public static class SignalShowcaseVerification
         var makeover = GameObject.Find("SHOWCASE 2026 - CINEMATIC MAKEOVER");
         var story = GameObject.Find("Mystery and Suspense");
         var arena = GameObject.Find("Echo Escape Arena");
+        var replacement = GameObject.Find("SHOWCASE - Architectural Replacement");
         var landmarks=GameObject.Find("SHOWCASE - Building and Gate Detail");
         string summary =
             "Open scene: " + scene.name +
@@ -25,6 +26,7 @@ public static class SignalShowcaseVerification
             "\nMystery pass: " + (story ? "INSTALLED" : "NOT APPLIED") +
             "\nEscape arena: " + (arena ? "INSTALLED" : "NOT APPLIED") +
             "\nCINEMATIC MAKEOVER: " + (makeover ? "INSTALLED" : "NOT APPLIED") +
+            "\nBLOCKOUT REPLACEMENT: " + (replacement ? "INSTALLED" : "NOT APPLIED") +
             "\n\nGitHub script updates do NOT automatically modify your saved .unity scene. Apply the SHOWCASE Cinematic Makeover menu once, save, then verify again.";
         Debug.Log("[LAST SIGNAL] " + summary);
         EditorUtility.DisplayDialog("LAST SIGNAL - SCENE STATUS",summary,"OK");
