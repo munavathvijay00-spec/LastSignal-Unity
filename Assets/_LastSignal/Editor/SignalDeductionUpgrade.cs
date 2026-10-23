@@ -39,7 +39,7 @@ public static class SignalDeductionUpgrade
         EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         EditorSceneManager.SaveOpenScenes();
         EditorUtility.DisplayDialog("LAST SIGNAL",
-            "Evidence deduction is required to open the gate. Collect the report, dispatch and protocol; open the phone with Tab and choose 1, 2 or 3.", "OK");
+            "Evidence deduction is required to open the gate. Collect the report, dispatch and protocol; open the phone with Tab, link 1+2 then 2+3 using the number keys.", "OK");
     }
 }
 #endif
