@@ -47,6 +47,38 @@ public static class SignalSceneHealthCheck
             Debug.LogError("[LAST SIGNAL QA] Gate requires an Echo but no plate is assigned");fail++;
         }
 
+        if(gate!=null && gate.requiredClue=="deduction")
+        {
+            string[] evidenceNames={"Maintenance work order","Missing crew dispatch","Emergency protocol card"};
+            string[] evidenceIds={"code","crew_dispatch","protocol_card"};
+            for(int i=0;i<evidenceNames.Length;i++)
+            {
+                var evidence=GameObject.Find(evidenceNames[i]);
+                var clue=evidence?evidence.GetComponent<SignalClue>():null;
+                if(clue==null || clue.clueId!=evidenceIds[i] || evidence.GetComponent<Collider>()==null)
+                {
+                    Debug.LogError("[LAST SIGNAL QA] Deduction evidence missing, has incorrect clue ID or lacks a collider: "+evidenceNames[i]);
+                    fail++;
+                }
+            }
+            if(Object.FindFirstObjectByType<SignalInteractionUI>()==null)
+            {
+                Debug.LogError("[LAST SIGNAL QA] Deduction gate active without phone interaction UI");
+                fail++;
+            }
+        }
+        var uiComponents=Object.FindObjectsByType<SignalInteractionUI>(FindObjectsSortMode.None);
+        if(uiComponents.Length!=1)
+        {
+            Debug.LogError("[LAST SIGNAL QA] Expected exactly one player UI, found "+uiComponents.Length);
+            fail++;
+        }
+        if(gate!=null && gate.requireEcho && gate.activationWindowSeconds<3f)
+            Debug.LogWarning("[LAST SIGNAL QA] Gate charge expires too quickly for normal play");
+        if(GameObject.Find("Mystery and Suspense")!=null &&
+           Object.FindFirstObjectByType<SignalSuspenseDirector>()==null)
+            Debug.LogWarning("[LAST SIGNAL QA] Mystery root exists but suspense sequence is absent");
+
         var stalker=Object.FindFirstObjectByType<SignalStalker>();
         if(stalker==null) Debug.LogWarning("[LAST SIGNAL QA] Watcher missing: stealth encounter cannot be tested");
         else
