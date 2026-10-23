@@ -74,6 +74,12 @@ namespace LastSignal
             if (chapterDirector != null && chapterDirector.chapter == 2)
                 return chapterDirector.stationSignalRecovered ? "CHAPTER 2: SEARCH THE CHECKPOINT FOR THE NEXT SIGNAL." : "CHAPTER 2: RECOVER THE RADIO STATION SIGNAL (E).";
             if (!world.Knows("code")) return "Investigate the maintenance report to learn what sealed the tunnel.";
+            if (tunnelDoor != null && !tunnelDoor.IsOpen &&
+                tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
+                return world.Knows("code") && world.Knows("crew_dispatch") &&
+                    world.Knows("protocol_card")
+                    ? "Open PHONE (TAB): compare the evidence and select the correct operator (1/2/3)."
+                    : "Investigate the shift report, crew dispatch and emergency protocol.";
             if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
             if (world.loopNumber == 1) return "Record a path across the relay, then rewind to let your Echo replay it.";
