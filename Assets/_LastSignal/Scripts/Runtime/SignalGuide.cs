@@ -21,6 +21,7 @@ namespace LastSignal
         private int lastLoop;
         private SignalDoor tunnelDoor;
         private SignalChapterDirector chapterDirector;
+        private SignalInteractionUI hud;
 
         void Start()
         {
@@ -33,6 +34,7 @@ namespace LastSignal
             lastLoop = world ? world.loopNumber : 1;
             tunnelDoor = FindFirstObjectByType<SignalDoor>();
             chapterDirector = FindFirstObjectByType<SignalChapterDirector>();
+            hud = FindFirstObjectByType<SignalInteractionUI>();
             SetTutorialPause(true);
             backdrop = new Texture2D(1, 1);
             backdrop.SetPixel(0, 0, new Color(.015f, .03f, .055f, .94f));
@@ -150,7 +152,7 @@ namespace LastSignal
             else
             {
                 // Objective is rendered once by SignalInteractionUI, not again over the interaction prompt.
-                if (!Input.GetKey(KeyCode.Tab)) DrawTarget(CurrentTarget(), w, h, scale);
+                if ((hud == null || (!hud.IsPhoneOpen && !hud.IsInspecting))) DrawTarget(CurrentTarget(), w, h, scale);
             }
             GUI.matrix = oldMatrix;
         }
