@@ -3,7 +3,7 @@
 ## Implementation
 The earlier phone multiple-choice quiz has been replaced with a two-connection deduction puzzle. Recover the three required clues: the maintenance shift report (code), missing crew dispatch (crew_dispatch), and emergency protocol (protocol_card).
 
-With the phone open (Tab), press number keys to select two collected records in sequence. Linking record 1 (Shift Report) to 2 (Crew Dispatch) establishes the duplicated-signature discrepancy. Linking 2 (Crew Dispatch) to 3 (Echo Protocol) establishes that the second operator was a replayed Echo. Connecting other combinations produces a contradiction, without erasing collected evidence. Both valid links yield knowledge ID deduction and the original +90 XP award. The maintenance gate still needs a recorded Echo charge.
+With the phone open (Tab), click the three evidence-card buttons or press number keys 1, 2 or 3 to select two collected records in sequence. Linking record 1 (Shift Report) to 2 (Crew Dispatch) establishes the duplicated-signature discrepancy. Linking 2 (Crew Dispatch) to 3 (Echo Protocol) establishes that the second operator was a replayed Echo. Connecting other combinations produces a contradiction, without erasing collected evidence. Both valid links yield knowledge ID deduction and the original +90 XP award. The maintenance gate still needs a recorded Echo charge.
 
 ## Existing-scene installation
 1. Back up Prototype.unity, quit Unity and run bash ~/Downloads/sync-lastsignal-mac.sh.
