@@ -52,6 +52,7 @@ namespace LastSignal {
     player.transform.SetPositionAndRotation(spawn.position,spawn.rotation);cc.enabled=true;player.ResetView();
    }
    foreach(var door in FindObjectsByType<SignalDoor>(FindObjectsSortMode.None))door.ResetDoor();
+   foreach(var plate in FindObjectsByType<SignalEchoPlate>(FindObjectsSortMode.None))plate.ResetForNewLoop();
    if(echo)Destroy(echo);
    if(lastPath.Count>0){
     echo=GameObject.CreatePrimitive(PrimitiveType.Capsule);
