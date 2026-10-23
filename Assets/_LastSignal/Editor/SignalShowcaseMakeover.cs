@@ -142,6 +142,16 @@ public static class SignalShowcaseMakeover
         Part(text+" frame",PrimitiveType.Cube,pos,new Vector3(width,.65f,.14f),back,false);
         Part(text+" signal face",PrimitiveType.Cube,pos+new Vector3(0,0,.08f),
             new Vector3(width*.86f,.34f,.05f),ink,false);
+        GameObject letters = new GameObject(text + " lettering");
+        letters.transform.SetParent(root,false);
+        letters.transform.position = pos + new Vector3(0f,-.15f,.123f);
+        var textMesh = letters.AddComponent<TextMesh>();
+        textMesh.text = text;
+        textMesh.fontSize = 48;
+        textMesh.characterSize = .105f;
+        textMesh.anchor = TextAnchor.MiddleCenter;
+        textMesh.alignment = TextAlignment.Center;
+        textMesh.color = Color.white;
         for(int side=-1;side<=1;side+=2)
             Part(text+" post",PrimitiveType.Cube,pos+new Vector3(side*width*.4f,-1.35f,0),
                 new Vector3(.10f,2.1f,.10f),back,false);
