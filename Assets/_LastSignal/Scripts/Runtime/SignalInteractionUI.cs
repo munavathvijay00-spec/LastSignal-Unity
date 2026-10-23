@@ -11,6 +11,7 @@ namespace LastSignal
 
         private bool phoneOpen;
         private bool inspecting;
+        private float inspectionPreviousTimeScale = 1f;
         private string inspectionTitle = "";
         private string inspectionBody = "";
         public bool IsInspecting { get { return inspecting; } }
@@ -84,7 +85,7 @@ namespace LastSignal
                 if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return) ||
                     Input.GetKeyDown(KeyCode.E))
                 {
-                    inspecting = false;
+                    CloseInspection();
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
                 }
@@ -123,6 +124,8 @@ namespace LastSignal
                         inspectionTitle = clue.prompt.ToUpperInvariant();
                         inspectionBody = clue.discoveryText;
                         inspecting = true;
+                        inspectionPreviousTimeScale = Time.timeScale;
+                        Time.timeScale = 0f;
                         Cursor.lockState = CursorLockMode.None;
                         Cursor.visible = true;
                     }
@@ -133,6 +136,18 @@ namespace LastSignal
                 lastStatus = world.status;
                 notificationUntil = Time.time + 5f;
             }
+        }
+
+        private void CloseInspection()
+        {
+            if (!inspecting) return;
+            inspecting = false;
+            Time.timeScale = inspectionPreviousTimeScale;
+        }
+
+        private void OnDisable()
+        {
+            CloseInspection();
         }
 
         private void LinkEvidence(int index)
