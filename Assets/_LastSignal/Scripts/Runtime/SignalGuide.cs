@@ -80,7 +80,7 @@ namespace LastSignal
                 tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
                 return world.Knows("code") && world.Knows("crew_dispatch") &&
                     world.Knows("protocol_card")
-                    ? "Open PHONE (TAB): compare the evidence and select the correct operator (1/2/3)."
+                    ? "Open PHONE (TAB). Connect evidence pairs: Shift + Dispatch, then Dispatch + Protocol."
                     : "Investigate the shift report, crew dispatch and emergency protocol.";
             if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
