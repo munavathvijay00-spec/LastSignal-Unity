@@ -159,6 +159,28 @@ namespace LastSignal
                 return;
             }
 
+            if (inspecting)
+            {
+                GUI.DrawTexture(new Rect(0f, 0f, w, h), blackTexture);
+                float pw = Mathf.Min(760f, w - 50f);
+                float x = (w - pw) * .5f;
+                float y = Mathf.Max(20f, (h - 390f) * .5f);
+                GUI.DrawTexture(new Rect(x, y, pw, 390f), phoneTexture);
+                GUI.DrawTexture(new Rect(x, y, pw, 5f), accentTexture);
+                GUI.Label(new Rect(x + 30f, y + 25f, pw - 60f, 35f),
+                    "EVIDENCE RECOVERED / CASE 0471", phoneTitle);
+                var headline = new GUIStyle(titleStyle) { wordWrap = true };
+                GUI.Label(new Rect(x + 30f, y + 78f, pw - 60f, 55f),
+                    inspectionTitle, headline);
+                var narrative = new GUIStyle(phoneBody) { wordWrap = true, fontSize = 20 };
+                GUI.Label(new Rect(x + 30f, y + 144f, pw - 60f, 170f),
+                    inspectionBody, narrative);
+                GUI.Label(new Rect(x + 30f, y + 343f, pw - 60f, 30f),
+                    "ENTER / E / ESC - CLOSE EVIDENCE", smallStyle);
+                GUI.matrix = previousMatrix;
+                return;
+            }
+
             // Time and objective, top-left.
             if (!phoneOpen) GUI.DrawTexture(new Rect(22, 20, 365, 110), panelTexture);
             if (!phoneOpen) GUI.DrawTexture(new Rect(22, 20, 4, 110), accentTexture);
