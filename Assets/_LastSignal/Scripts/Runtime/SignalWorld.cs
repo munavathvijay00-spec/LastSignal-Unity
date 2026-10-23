@@ -19,7 +19,7 @@ namespace LastSignal {
   float captureClock,echoClock;
   public bool Knows(string id)=>knowledge.Contains(id);
   public bool TryGetEchoPosition(out Vector3 position) {
-   if (echo != null && lastPath != null && lastPath.Count > 0) {
+   if (echo != null && echo.activeSelf && lastPath != null && lastPath.Count > 0 && echoClock < lastPath.Count * .1f) {
     position=echo.transform.position;
     return true;
    }
@@ -27,7 +27,7 @@ namespace LastSignal {
    return false;
   }
   public bool EchoNear(Vector3 position, float radius) {
-   if (echo == null || lastPath == null || lastPath.Count == 0) return false;
+   if (echo == null || !echo.activeSelf || lastPath == null || lastPath.Count == 0 || echoClock >= lastPath.Count * .1f) return false;
    Vector3 flatDelta = echo.transform.position - position;
    flatDelta.y = 0;
    return flatDelta.sqrMagnitude <= radius * radius;
@@ -41,6 +41,7 @@ namespace LastSignal {
     echoClock+=Time.deltaTime;
     int index=Mathf.Min(Mathf.FloorToInt(echoClock/.1f),lastPath.Count-1);
     echo.transform.position=lastPath[index]+Vector3.up*.95f;
+    if (echoClock >= lastPath.Count*.1f) echo.SetActive(false);
    }
    if(elapsed>=loopDuration)ResetLoop();
   }
