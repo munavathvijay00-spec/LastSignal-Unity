@@ -10,6 +10,7 @@ namespace LastSignal
         public float range = 3.5f;
 
         private bool phoneOpen;
+        public bool IsPhoneOpen { get { return phoneOpen; } }
         private SignalGuide guide;
         private SignalDoor temporalGate;
 
@@ -107,6 +108,7 @@ namespace LastSignal
             if (guide != null && guide.IsHelpOpen) return;
             Initialize();
             float w = Screen.width, h = Screen.height;
+            Matrix4x4 previousMatrix = GUI.matrix;
             float scale = Mathf.Min(w / 1280f, h / 720f);
             scale = Mathf.Max(.62f, scale);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1));
@@ -118,25 +120,25 @@ namespace LastSignal
                 CenterLabel(new Rect(0, h * .31f, w, 62), world.endingTitle, overlayStyle);
                 CenterLabel(new Rect(0, h * .43f, w, 55), world.endingDescription, bodyStyle);
                 CenterLabel(new Rect(0, h * .58f, w, 35), "R  —  RESTART TIMELINE", promptStyle);
+                GUI.matrix = previousMatrix;
                 return;
             }
 
             // Time and objective, top-left.
-            GUI.DrawTexture(new Rect(22, 20, 340, 104), panelTexture);
-            GUI.DrawTexture(new Rect(22, 20, 4, 104), accentTexture);
-            GUI.Label(new Rect(40, 29, 295, 29), "LAST SIGNAL   /   11:47 PM", titleStyle);
+            if (!phoneOpen) GUI.DrawTexture(new Rect(22, 20, 365, 110), panelTexture);
+            if (!phoneOpen) GUI.DrawTexture(new Rect(22, 20, 4, 110), accentTexture);
+            if (!phoneOpen) GUI.Label(new Rect(40, 29, 330, 29), "LAST SIGNAL   /   11:47 PM", titleStyle);
             string time = world == null ? "NO SIGNAL" :
                 "LOOP " + world.loopNumber + "   •   " +
                 Mathf.CeilToInt(Mathf.Max(0f, world.loopDuration - world.elapsed)) + "s UNTIL REWIND";
-            GUI.Label(new Rect(40, 64, 295, 23), time, bodyStyle);
-            string objective = "INVESTIGATE THE TUNNEL";
-            if (world != null && world.Knows("code"))
-                objective = world.Knows("recording") ?
-                    "FIND THE SIGNAL OR ESCAPE" : "USE YOUR ECHO TO OPEN THE GATE";
-            if (world != null && (world.Knows("signal_radio") || world.Knows("signal_checkpoint") || world.Knows("signal_service")))
-                objective = "COLLECT 3 SIGNALS AND DECODE SOURCE";
-            GUI.Label(new Rect(40, 91, 310, 22), "OBJECTIVE  /  " + objective, smallStyle);
-            if (temporalGate != null && temporalGate.requireEcho &&
+            if (!phoneOpen) GUI.Label(new Rect(40, 64, 330, 23), time, bodyStyle);
+            string objective = guide != null ? guide.CurrentObjective() : "Investigate the sealed tunnel.";
+            if (!phoneOpen)
+            {
+                var taskStyle = new GUIStyle(smallStyle) { wordWrap = true, fontSize = 13 };
+                GUI.Label(new Rect(40, 87, 330, 42), objective, taskStyle);
+            }
+            if (!phoneOpen && temporalGate != null && temporalGate.requireEcho &&
                 !temporalGate.IsOpen && temporalGate.RemainingWindow > 0.05f)
             {
                 GUI.DrawTexture(new Rect(w/2f-170, 20, 340, 54), panelTexture);
@@ -162,12 +164,12 @@ namespace LastSignal
                 GUI.Label(new Rect(35, h - 52, 580, 30),
                     "WASD MOVE  •  SHIFT SPRINT  •  F LIGHT  •  TAB PHONE  •  T REWIND", smallStyle);
 
-                if (world != null && Time.time < notificationUntil)
+                if (world != null && Time.time < notificationUntil && !world.status.StartsWith("WATCHER"))
                 {
-                    GUI.DrawTexture(new Rect(w - 470, 22, 445, 90), panelTexture);
-                    GUI.DrawTexture(new Rect(w - 470, 22, 4, 90), accentTexture);
-                    GUI.Label(new Rect(w - 452, 26, 410, 21), "NEW TIMELINE EVENT", smallStyle);
-                    GUI.Label(new Rect(w - 452, 46, 410, 60), world.status, bodyStyle);
+                    GUI.DrawTexture(new Rect(w - 445, 22, 420, 85), panelTexture);
+                    GUI.DrawTexture(new Rect(w - 445, 22, 4, 85), accentTexture);
+                    GUI.Label(new Rect(w - 427, 26, 390, 21), "TIMELINE UPDATE", smallStyle);
+                    GUI.Label(new Rect(w - 427, 45, 390, 58), world.status, new GUIStyle(smallStyle) { wordWrap = true, fontSize = 13 });
                 }
             }
             else
@@ -204,6 +206,7 @@ namespace LastSignal
                     smallStyle);
                 CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
             }
+            GUI.matrix = previousMatrix;
         }
 
         private static void CenterLabel(Rect rect, string content, GUIStyle style)
