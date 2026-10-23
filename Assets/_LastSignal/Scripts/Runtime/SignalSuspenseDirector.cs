@@ -83,7 +83,7 @@ namespace LastSignal
         void OnGUI()
         {
             if (!world || world.ended || Time.time >= until ||
-                (guide && guide.IsHelpOpen) || (interfaceUI && interfaceUI.IsPhoneOpen)) return;
+                (guide && guide.IsHelpOpen) || (interfaceUI && (interfaceUI.IsPhoneOpen || interfaceUI.IsInspecting))) return;
             if (!panel)
             {
                 panel = new Texture2D(1, 1);
