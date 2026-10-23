@@ -80,7 +80,7 @@ namespace LastSignal
         private void OnGUI()
         {
             if (!world || !watcher || world.ended ||
-                (guide && guide.IsHelpOpen) || (FindFirstObjectByType<SignalInteractionUI>() != null && FindFirstObjectByType<SignalInteractionUI>().IsPhoneOpen)) return;
+                (guide && guide.IsHelpOpen) || (FindFirstObjectByType<SignalInteractionUI>() != null && (FindFirstObjectByType<SignalInteractionUI>().IsPhoneOpen || FindFirstObjectByType<SignalInteractionUI>().IsInspecting))) return;
             if (panel == null)
             {
                 panel = new Texture2D(1, 1);
