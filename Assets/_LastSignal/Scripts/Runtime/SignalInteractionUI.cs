@@ -81,6 +81,15 @@ namespace LastSignal
                 Cursor.visible = phoneOpen;
             }
 
+            if (phoneOpen && world != null && !world.Knows("deduction") &&
+                world.Knows("code") && world.Knows("crew_dispatch") && world.Knows("protocol_card"))
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                    world.Discover("deduction", "DEDUCTION VERIFIED: Your recorded Echo is the missing second operator. The gate must respond to a previous timeline.");
+                else if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha3))
+                    world.status = "CONTRADICTION: That answer does not explain the repeated signature and the Echo protocol.";
+            }
+
             if (Input.GetKeyDown(KeyCode.E) && !phoneOpen &&
                 Cursor.lockState == CursorLockMode.Locked && LookAt(out SignalInteractable target))
                 target.Interact(world);
@@ -186,24 +195,21 @@ namespace LastSignal
                 GUI.Label(new Rect(px + 25, py + 250, 340, 30), "EVIDENCE LOG", phoneTitle);
 
                 string evidence = world == null ? "NO SIGNAL" :
-                    (world.Knows("code") ? "01  WORK ORDER: ACCESS CODE 0471\n" : "01  WORK ORDER: NOT DISCOVERED\n") +
-                    (world.Knows("recording") ? "02  RECORDING: YOUR OWN VOICE" : "02  RECORDING: NOT DISCOVERED");
-                GUI.Label(new Rect(px + 25, py + 290, 340, 100), evidence, phoneBody);
-                if (world != null && (world.Knows("frequency") || world.Knows("dispatch")))
-                {
-                    GUI.Label(new Rect(px + 25, py + 385, 350, 24),
-                        "ADDITIONAL SIGNALS RECOVERED", smallStyle);
-                }
-                GUI.DrawTexture(new Rect(px + 25, py + 410, 350, 1), accentTexture);
-                int fragments = world == null ? 0 :
-                    (world.Knows("signal_service") ? 1 : 0) +
-                    (world.Knows("signal_radio") ? 1 : 0) +
-                    (world.Knows("signal_checkpoint") ? 1 : 0);
-                GUI.Label(new Rect(px + 25, py + 425, 350, 25),
-                    "SIGNAL FRAGMENTS: " + fragments + " / 3", phoneBody);
-                GUI.Label(new Rect(px + 25, py + 455, 350, 42),
-                    "Search the service station, radio station and checkpoint.\nKnowledge survives every rewind.",
-                    smallStyle);
+                    "SHIFT REPORT  " + (world.Knows("code") ? "FOUND" : "MISSING") +
+                    "\\nCREW DISPATCH  " + (world.Knows("crew_dispatch") ? "FOUND" : "MISSING") +
+                    "\\nECHO PROTOCOL  " + (world.Knows("protocol_card") ? "FOUND" : "MISSING") +
+                    "\\nRADIO LOG  " + (world.Knows("radio_log") ? "FOUND" : "MISSING");
+                GUI.Label(new Rect(px + 25, py + 288, 345, 104), evidence, new GUIStyle(smallStyle) { fontSize = 15 });
+                bool ready = world != null && world.Knows("code") &&
+                    world.Knows("crew_dispatch") && world.Knows("protocol_card");
+                string deduction = world != null && world.Knows("deduction")
+                    ? "DEDUCTION SOLVED: YOUR PAST ECHO IS THE SECOND OPERATOR."
+                    : ready
+                      ? "WHO CAN ACTIVATE THE SEALED RELAY?\\n[1] WATCHER    [2] RECORDED OPERATOR\\n[3] MISSING TECHNICIAN"
+                      : "DEDUCTION LOCKED\\nRecover the shift report, crew dispatch and Echo protocol.";
+                GUI.DrawTexture(new Rect(px + 23, py + 395, 354, 104), panelTexture);
+                GUI.Label(new Rect(px + 34, py + 403, 332, 93), deduction,
+                    new GUIStyle(smallStyle) { fontSize = 14, wordWrap = true });
                 CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
             }
             GUI.matrix = previousMatrix;
