@@ -86,6 +86,10 @@ namespace LastSignal
         void OnGUI()
         {
             if (world == null || world.ended) return;
+            var guide = FindFirstObjectByType<SignalGuide>();
+            var hud = FindFirstObjectByType<SignalInteractionUI>();
+            if ((guide != null && guide.IsHelpOpen) ||
+                (hud != null && (hud.IsPhoneOpen || hud.IsInspecting))) return;
             if (background == null)
             {
                 background = new Texture2D(1,1);
