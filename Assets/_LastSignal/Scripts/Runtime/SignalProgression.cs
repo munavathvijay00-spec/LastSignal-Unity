@@ -26,12 +26,14 @@ namespace LastSignal
         private SignalEchoPlate relayComponent;
         private SignalDoor gateComponent;
         private SignalStalker stalker;
+        private SignalInteractionUI hud;
 
         void Start()
         {
             if (!world) world = FindFirstObjectByType<SignalWorld>();
             if (!guide) guide = FindFirstObjectByType<SignalGuide>();
             stalker = FindFirstObjectByType<SignalStalker>();
+            hud = FindFirstObjectByType<SignalInteractionUI>();
             var a=GameObject.Find("Echo relay plate"); if(a) {relay=a.transform; relayComponent=a.GetComponent<SignalEchoPlate>();}
             var b=GameObject.Find("Maintenance gate"); if(b) {gate=b.transform; gateComponent=b.GetComponent<SignalDoor>();}
             var c=GameObject.Find("Hidden transmitter recording"); if(c) recording=c.transform;
@@ -82,7 +84,7 @@ namespace LastSignal
 
         void OnGUI()
         {
-            if (world == null || world.ended || (guide!=null && guide.IsHelpOpen)) return;
+            if (world == null || world.ended || (guide!=null && guide.IsHelpOpen) || (hud != null && hud.IsPhoneOpen)) return;
             if (panel==null)
             {
                 panel=new Texture2D(1,1);
