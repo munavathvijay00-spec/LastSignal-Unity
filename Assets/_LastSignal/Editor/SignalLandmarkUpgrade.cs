@@ -22,9 +22,9 @@ public static class SignalLandmarkUpgrade
         if(!shader) return;
         var root=new GameObject("SHOWCASE - Building and Gate Detail").transform;
         Undo.RegisterCreatedObjectUndo(root.gameObject,"Add building detail");
-        var steel=Mat(shader,new Color(.18f,.25f,.29f));
-        var dark=Mat(shader,new Color(.045f,.07f,.09f));
-        var glass=Mat(shader,new Color(.08f,.28f,.34f));
+        var steel=Mat(shader,"Weathered Frame",new Color(.18f,.25f,.29f));
+        var dark=Mat(shader,"Midnight Slate",new Color(.045f,.07f,.09f));
+        var glass=Mat(shader,"Cold Window Glass",new Color(.08f,.28f,.34f));
         foreach(string name in new[]{"Abandoned house","Old shop"})
         {
             GameObject building=GameObject.Find(name);
@@ -63,15 +63,22 @@ public static class SignalLandmarkUpgrade
             BoxLocal(gateParent,"Crossbar",new Vector3(0,-.25f,-.59f),
                 new Vector3(1f,.08f,.12f),dark);
         }
+        AssetDatabase.SaveAssets();
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         EditorSceneManager.SaveOpenScenes();
         EditorUtility.DisplayDialog("LAST SIGNAL",
             "Visible building facades and gate framing added. Existing colliders and puzzles untouched. Review in Game view.","OK");
     }
-    static Material Mat(Shader shader,Color color)
+    static Material Mat(Shader shader,string name,Color color)
     {
-        var mat=new Material(shader);mat.color=color;
-        mat.hideFlags=HideFlags.DontSaveInEditor;
+        const string folder="Assets/_LastSignal/Generated/Showcase2026";
+        System.IO.Directory.CreateDirectory(folder);
+        string path=folder+"/"+name.Replace(" ","_")+".mat";
+        var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
+        if(mat) return mat;
+        mat=new Material(shader);
+        mat.color=color;
+        AssetDatabase.CreateAsset(mat,path);
         return mat;
     }
     static void Box(Transform parent,string name,Vector3 position,Vector3 size,Material material)
