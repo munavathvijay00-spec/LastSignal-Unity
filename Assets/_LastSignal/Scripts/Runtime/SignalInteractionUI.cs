@@ -107,7 +107,18 @@ namespace LastSignal
 
             if (Input.GetKeyDown(KeyCode.E) && !phoneOpen &&
                 Cursor.lockState == CursorLockMode.Locked && LookAt(out SignalInteractable target))
-                target.Interact(world);
+                {
+                    target.Interact(world);
+                    var clue = target as SignalClue;
+                    if (clue != null && world != null)
+                    {
+                        inspectionTitle = clue.prompt.ToUpperInvariant();
+                        inspectionBody = clue.discoveryText;
+                        inspecting = true;
+                        Cursor.lockState = CursorLockMode.None;
+                        Cursor.visible = true;
+                    }
+                }
 
             if (world != null && world.status != lastStatus)
             {
