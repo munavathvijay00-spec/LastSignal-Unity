@@ -47,6 +47,9 @@ public static class SignalBlockoutReplacement
 
         Transform group = new GameObject(GroupName).transform;
         Undo.RegisterCreatedObjectUndo(group.gameObject, "Replace blockout houses");
+        // Hide the older additive facade detail to avoid two sets of windows and roof geometry.
+        var previous = GameObject.Find("SHOWCASE - Building and Gate Detail");
+        if (previous) { Undo.RecordObject(previous, "Disable outdated facade overlay"); previous.SetActive(false); }
         int count = 0;
         count += Convert("Abandoned house", group, siding, timber, roofing, glass, frames, false) ? 1 : 0;
         count += Convert("Old shop", group, siding, timber, roofing, glass, frames, true) ? 1 : 0;
