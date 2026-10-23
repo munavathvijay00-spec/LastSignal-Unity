@@ -92,6 +92,12 @@ namespace LastSignal
             if (chapterDirector != null && chapterDirector.chapter == 2) return null;
             if (!world || !world.Knows("code")) return clue;
             if (world.Knows("recording")) { var next=GameObject.Find("Chapter 2 Transit Beacon"); return next ? next.transform : receiver; }
+            if (tunnelDoor != null && tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
+            {
+                if (!world.Knows("crew_dispatch")) { var dispatch=GameObject.Find("Missing crew dispatch"); return dispatch ? dispatch.transform : clue; }
+                if (!world.Knows("protocol_card")) { var protocol=GameObject.Find("Emergency protocol card"); return protocol ? protocol.transform : clue; }
+                return null; // Player must make the inference on the phone, not find another prop.
+            }
             if (tunnelDoor != null && tunnelDoor.IsOpen) return receiver;
             if (world.loopNumber == 1) return relay;
             if (!world.Knows("recording")) return gate;
