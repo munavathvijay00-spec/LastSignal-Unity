@@ -117,6 +117,12 @@ namespace LastSignal
                     }
                     else
                     {
+                        if (selectedEvidence == index)
+                        {
+                            linkFeedback = "Select a DIFFERENT record to form a connection.";
+                            selectedEvidence = 0;
+                            return;
+                        }
                         int lo = Mathf.Min(selectedEvidence, index);
                         int hi = Mathf.Max(selectedEvidence, index);
                         if (lo == 1 && hi == 2)
@@ -277,7 +283,7 @@ namespace LastSignal
                 GUI.DrawTexture(new Rect(px + 25, py + 104, 350, 1), accentTexture);
                 GUI.Label(new Rect(px + 25, py + 127, 345, 110),
                     "DON'T ENTER THE TUNNEL.\nI MADE THAT MISTAKE LAST TIME.", phoneBody);
-                GUI.Label(new Rect(px + 25, py + 250, 340, 30), "EVIDENCE LOG", phoneTitle);
+                GUI.Label(new Rect(px + 25, py + 250, 340, 30), "CONNECT THE EVIDENCE", phoneTitle);
 
                 string evidence = world == null ? "NO SIGNAL" :
                     "SHIFT REPORT  " + (world.Knows("code") ? "FOUND" : "MISSING") +
@@ -289,11 +295,11 @@ namespace LastSignal
                     world.Knows("crew_dispatch") && world.Knows("protocol_card");
                 string deduction = world != null && world.Knows("deduction")
                     ? "CASE SOLVED / RECORDED ECHO IS SECOND OPERATOR"
-                    : "1 SHIFT  +  2 DISPATCH  +  3 PROTOCOL" +
-                      "\\nMATCH TWO RECORDS: " +
+                    : "SELECT TWO RECORDS USING KEYS 1 / 2 / 3" +
+                      "\nMATCH TWO RECORDS: " +
                       (signatureLink ? "SIGNATURE [OK]" : "SIGNATURE [ ]") +
                       "  " + (protocolLink ? "ECHO [OK]" : "ECHO [ ]") +
-                      "\\n" + linkFeedback;
+                      "\n" + linkFeedback;
                 GUI.DrawTexture(new Rect(px + 23, py + 395, 354, 104), panelTexture);
                 GUI.Label(new Rect(px + 34, py + 403, 332, 93), deduction,
                     new GUIStyle(smallStyle) { fontSize = 13, wordWrap = true });
