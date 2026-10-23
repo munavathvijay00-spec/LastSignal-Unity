@@ -57,7 +57,7 @@ namespace LastSignal
                 return;
             }
             if (requireEcho && (echoPlate == null ||
-                (!echoPlate.active && RemainingWindow <= 0f)))
+                RemainingWindow <= 0f))
             {
                 world.status = "ECHO RELAY EMPTY. RECORD YOURSELF ON THE PURPLE PLATE, THEN REWIND.";
                 return;
