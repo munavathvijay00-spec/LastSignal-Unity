@@ -66,6 +66,8 @@ public sealed class SignalCinematicDirector : MonoBehaviour {
   if(Time.time>displayUntil||world==null||world.ended)return;
   SignalGuide guide=FindFirstObjectByType<SignalGuide>();
   if(guide&&guide.IsHelpOpen)return;
+  var phone=FindFirstObjectByType<SignalInteractionUI>();
+  if(phone&&phone.IsPhoneOpen)return;
   if(background==null){
    background=new Texture2D(1,1);
    background.SetPixel(0,0,new Color(.02f,.035f,.06f,.9f));
