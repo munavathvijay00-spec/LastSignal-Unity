@@ -71,40 +71,73 @@ namespace LastSignal
             SetTutorialPause(false);
         }
 
+        private bool EvidenceRequired
+        {
+            get { return tunnelDoor != null && tunnelDoor.requiredClue == "deduction"; }
+        }
+
+        private bool EvidenceComplete
+        {
+            get { return world != null && world.Knows(EvidenceRequired ? "deduction" : "code"); }
+        }
+
         public string CurrentObjective()
         {
-            if (!world) return "Find the work order near the tunnel.";
+            if (!world) return "Locate the sealed tunnel.";
             if (chapterDirector != null && chapterDirector.chapter == 2)
-                return chapterDirector.stationSignalRecovered ? "CHAPTER 2: SEARCH THE CHECKPOINT FOR THE NEXT SIGNAL." : "CHAPTER 2: RECOVER THE RADIO STATION SIGNAL (E).";
-            if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the station transit beacon beyond the tunnel.";
-            if (!world.Knows("code")) return "Investigate the maintenance report to learn what sealed the tunnel.";
-            if (tunnelDoor != null && !tunnelDoor.IsOpen &&
-                tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
-                return world.Knows("code") && world.Knows("crew_dispatch") &&
-                    world.Knows("protocol_card")
-                    ? "Open PHONE (TAB). Connect evidence pairs: Shift + Dispatch, then Dispatch + Protocol."
-                    : "Investigate the shift report, crew dispatch and emergency protocol.";
-            if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
-            if (world.loopNumber == 1) return "Record a path across the relay, then rewind to let your Echo replay it.";
-            if (!world.Knows("recording")) return "Let your Echo charge the relay; open the gate before the signal fades.";
-            return "STEP 4: Follow the tunnel. Decode the transmitter or reach the escape tower.";
+                return chapterDirector.stationSignalRecovered
+                    ? "Search the checkpoint for the next transmission."
+                    : "Reach the radio station and investigate its signal.";
+            if (world.Knows("recording"))
+                return "Follow the tunnel to the station transit beacon.";
+            if (tunnelDoor != null && tunnelDoor.IsOpen)
+                return "The tunnel is open. Find the hidden voice recording.";
+
+            // The gate being temporarily charged is urgent, but clues are still required.
+            if (!EvidenceComplete)
+            {
+                if (!world.Knows("code")) return "Find the missing night-shift report.";
+                if (EvidenceRequired)
+                {
+                    if (!world.Knows("crew_dispatch")) return "Investigate the missing crew dispatch.";
+                    if (!world.Knows("protocol_card")) return "Recover the emergency Echo protocol.";
+                    return "Open the phone (TAB) and connect the evidence.";
+                }
+            }
+            if (tunnelDoor != null && tunnelDoor.RemainingWindow > .05f)
+                return "RELAY CHARGED: Reach the gate and press E before it expires.";
+            if (world.loopNumber == 1)
+                return "Walk across the Echo relay; rewind (T) to replay your path.";
+            return "Wait for your recorded Echo to reach the relay. Then open the gate.";
         }
 
         Transform CurrentTarget()
         {
             if (chapterDirector != null && chapterDirector.chapter == 2) return null;
-            if (!world || !world.Knows("code")) return clue;
-            if (world.Knows("recording")) { var next=GameObject.Find("Chapter 2 Transit Beacon"); return next ? next.transform : receiver; }
-            if (tunnelDoor != null && tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
+            if (!world) return clue;
+            if (world.Knows("recording"))
             {
-                if (!world.Knows("crew_dispatch")) { var dispatch=GameObject.Find("Missing crew dispatch"); return dispatch ? dispatch.transform : clue; }
-                if (!world.Knows("protocol_card")) { var protocol=GameObject.Find("Emergency protocol card"); return protocol ? protocol.transform : clue; }
-                return null; // Player must make the inference on the phone, not find another prop.
+                var beacon = GameObject.Find("Chapter 2 Transit Beacon");
+                return beacon ? beacon.transform : receiver;
             }
             if (tunnelDoor != null && tunnelDoor.IsOpen) return receiver;
-            if (world.loopNumber == 1) return relay;
-            if (!world.Knows("recording")) return gate;
-            return receiver;
+            if (!world.Knows("code")) return clue;
+            if (EvidenceRequired && !world.Knows("deduction"))
+            {
+                if (!world.Knows("crew_dispatch"))
+                {
+                    var dispatch = GameObject.Find("Missing crew dispatch");
+                    return dispatch ? dispatch.transform : clue;
+                }
+                if (!world.Knows("protocol_card"))
+                {
+                    var protocol = GameObject.Find("Emergency protocol card");
+                    return protocol ? protocol.transform : clue;
+                }
+                return null; // The final inference is made in the phone.
+            }
+            if (tunnelDoor != null && tunnelDoor.RemainingWindow > .05f) return gate;
+            return world.loopNumber == 1 ? relay : gate;
         }
 
         void EnsureStyles()
