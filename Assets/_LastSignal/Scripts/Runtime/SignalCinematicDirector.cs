@@ -68,6 +68,8 @@ public sealed class SignalCinematicDirector : MonoBehaviour {
   if(guide&&guide.IsHelpOpen)return;
   var phone=FindFirstObjectByType<SignalInteractionUI>();
   if(phone&&phone.IsPhoneOpen)return;
+  var mystery=FindFirstObjectByType<SignalSuspenseDirector>();
+  if(mystery&&mystery.IsShowing)return;
   if(background==null){
    background=new Texture2D(1,1);
    background.SetPixel(0,0,new Color(.02f,.035f,.06f,.9f));
