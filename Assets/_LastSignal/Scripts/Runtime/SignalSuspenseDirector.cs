@@ -12,6 +12,7 @@ namespace LastSignal
         private int loop;
         private bool phoneBeat, outageBeat, shadowBeat, discoveryBeat;
         private float until;
+        public bool IsShowing { get { return Time.time < until && (!guide || !guide.IsHelpOpen) && (!interfaceUI || !interfaceUI.IsPhoneOpen); } }
         private string heading = "", detail = "";
         private GUIStyle titleStyle, bodyStyle;
         private Texture2D panel;
