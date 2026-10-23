@@ -67,7 +67,7 @@ public sealed class SignalCinematicDirector : MonoBehaviour {
   SignalGuide guide=FindFirstObjectByType<SignalGuide>();
   if(guide&&guide.IsHelpOpen)return;
   var phone=FindFirstObjectByType<SignalInteractionUI>();
-  if(phone&&phone.IsPhoneOpen)return;
+  if(phone&&(phone.IsPhoneOpen||phone.IsInspecting))return;
   var mystery=FindFirstObjectByType<SignalSuspenseDirector>();
   if(mystery&&mystery.IsShowing)return;
   if(background==null){
