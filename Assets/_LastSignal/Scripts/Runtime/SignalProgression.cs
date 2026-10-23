@@ -55,6 +55,7 @@ namespace LastSignal
         {
             if (!world || world.ended) return;
             if (world.Knows("code")) Award("workorder",50,"FIRST EVIDENCE");
+            if (world.Knows("deduction")) Award("deduction",90,"TIMELINE DEDUCTION SOLVED");
             if (world.loopNumber>1) Award("rewind",50,"FIRST REWIND");
             if (relayComponent != null && relayComponent.EverActivated)
                 Award("relay",75,"ECHO SYNCHRONIZED");
