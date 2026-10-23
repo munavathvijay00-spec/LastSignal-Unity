@@ -75,6 +75,7 @@ namespace LastSignal
             if (!world) return "Find the work order near the tunnel.";
             if (chapterDirector != null && chapterDirector.chapter == 2)
                 return chapterDirector.stationSignalRecovered ? "CHAPTER 2: SEARCH THE CHECKPOINT FOR THE NEXT SIGNAL." : "CHAPTER 2: RECOVER THE RADIO STATION SIGNAL (E).";
+            if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the station transit beacon beyond the tunnel.";
             if (!world.Knows("code")) return "Investigate the maintenance report to learn what sealed the tunnel.";
             if (tunnelDoor != null && !tunnelDoor.IsOpen &&
                 tunnelDoor.requiredClue == "deduction" && !world.Knows("deduction"))
@@ -82,7 +83,6 @@ namespace LastSignal
                     world.Knows("protocol_card")
                     ? "Open PHONE (TAB). Connect evidence pairs: Shift + Dispatch, then Dispatch + Protocol."
                     : "Investigate the shift report, crew dispatch and emergency protocol.";
-            if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
             if (world.loopNumber == 1) return "Record a path across the relay, then rewind to let your Echo replay it.";
             if (!world.Knows("recording")) return "Let your Echo charge the relay; open the gate before the signal fades.";
@@ -143,11 +143,11 @@ namespace LastSignal
                 GUI.DrawTexture(new Rect(w / 2 - 315, h / 2 - 205, 630, 410), backdrop);
                 GUI.Label(new Rect(w / 2 - 275, h / 2 - 180, 550, 42), "LAST SIGNAL   /   HOW TO SURVIVE", heading);
                 GUI.Label(new Rect(w / 2 - 275, h / 2 - 123, 550, 93),
-                    "You are trapped in a three-minute time loop. Your movements from the previous loop replay as a BLUE ECHO. Use that Echo as your teammate to open the locked tunnel.", text);
+                    "You are trapped in a three-minute time loop. Clues survive each rewind. Investigate the missing crew, connect evidence on your phone, and use your recorded BLUE ECHO to breach the tunnel.", text);
                 GUI.Label(new Rect(w / 2 - 275, h / 2 - 14, 550, 110),
                     "WASD  Walk       MOUSE  Look       SHIFT  Sprint\nF  Flashlight       E  Interact       TAB  Phone\nT  Rewind first loop       H  Help anytime", text);
                 GUI.Label(new Rect(w / 2 - 275, h / 2 + 125, 550, 55),
-                    "FIRST GOAL: Find the gold work order beside the road.\nPRESS ENTER TO START  •  H TO SHOW THIS AGAIN", hint);
+                    "FIRST GOAL: Examine the shift report near the road.\nPRESS ENTER TO START  •  H TO SHOW THIS AGAIN", hint);
             }
             else
             {
