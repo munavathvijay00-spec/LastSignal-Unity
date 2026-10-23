@@ -10,6 +10,10 @@ namespace LastSignal
         public float range = 3.5f;
 
         private bool phoneOpen;
+        private bool inspecting;
+        private string inspectionTitle = "";
+        private string inspectionBody = "";
+        public bool IsInspecting { get { return inspecting; } }
         public bool IsPhoneOpen { get { return phoneOpen; } }
         private SignalGuide guide;
         private SignalDoor temporalGate;
@@ -71,6 +75,17 @@ namespace LastSignal
                 return;
             }
 
+            if (inspecting)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return) ||
+                    Input.GetKeyDown(KeyCode.E))
+                {
+                    inspecting = false;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                return;
+            }
             if (Input.GetKeyDown(KeyCode.T) && world != null && world.loopNumber == 1)
                 world.ResetLoop();
 
