@@ -105,13 +105,6 @@ namespace LastSignal
                 GUI.DrawTexture(new Rect(w / 2f - 300, 245, 600, 54), panel);
                 GUI.Label(new Rect(w / 2f - 293, 254, 586, 38), message, heading);
             }
-            else if (world.elapsed < watcher.activateAfterSeconds)
-            {
-                float seconds = Mathf.Ceil(watcher.activateAfterSeconds - world.elapsed);
-                GUI.DrawTexture(new Rect(w / 2f - 140, 245, 280, 40), panel);
-                GUI.Label(new Rect(w / 2f - 135, 252, 270, 26),
-                    "WATCHER ARRIVES IN " + seconds + "s", body);
-            }
             else if (watcher.EscapeWindowActive)
             {
                 GUI.DrawTexture(new Rect(w / 2f - 200, 245, 400, 42), panel);
