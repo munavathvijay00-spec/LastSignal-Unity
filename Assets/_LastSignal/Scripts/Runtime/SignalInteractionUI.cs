@@ -265,7 +265,8 @@ namespace LastSignal
                 chargedStyle.alignment = TextAnchor.MiddleCenter;
                 GUI.Label(new Rect(w/2f-165, 24, 330, 45),
                     "GATE CHARGED   " + Mathf.CeilToInt(temporalGate.RemainingWindow) +
-                    "s   →   PRESS E", chargedStyle);
+                    (world != null && !string.IsNullOrEmpty(temporalGate.requiredClue) && !world.Knows(temporalGate.requiredClue)
+                    ? "s   •   EVIDENCE REQUIRED" : "s   →   OPEN THE GATE"), chargedStyle);
             }
 
             if (!phoneOpen)
