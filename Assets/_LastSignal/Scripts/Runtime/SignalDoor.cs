@@ -51,7 +51,9 @@ namespace LastSignal
             if (world == null || opened) return;
             if (!string.IsNullOrEmpty(requiredClue) && !world.Knows(requiredClue))
             {
-                world.status = "GATE LOCKED. FIND THE GOLD WORK ORDER AND PRESS E.";
+                world.status = requiredClue == "deduction" ?
+                    "GATE LOCKED: OPEN PHONE (TAB), CONNECT SHIFT REPORT + DISPATCH + ECHO PROTOCOL." :
+                    "GATE LOCKED. FIND THE GOLD WORK ORDER AND PRESS E.";
                 return;
             }
             if (requireEcho && (echoPlate == null ||
