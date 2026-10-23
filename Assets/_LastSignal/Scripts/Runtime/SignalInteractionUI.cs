@@ -196,17 +196,17 @@ namespace LastSignal
 
                 string evidence = world == null ? "NO SIGNAL" :
                     "SHIFT REPORT  " + (world.Knows("code") ? "FOUND" : "MISSING") +
-                    "\\nCREW DISPATCH  " + (world.Knows("crew_dispatch") ? "FOUND" : "MISSING") +
-                    "\\nECHO PROTOCOL  " + (world.Knows("protocol_card") ? "FOUND" : "MISSING") +
-                    "\\nRADIO LOG  " + (world.Knows("radio_log") ? "FOUND" : "MISSING");
+                    "\nCREW DISPATCH  " + (world.Knows("crew_dispatch") ? "FOUND" : "MISSING") +
+                    "\nECHO PROTOCOL  " + (world.Knows("protocol_card") ? "FOUND" : "MISSING") +
+                    "\nRADIO LOG  " + (world.Knows("radio_log") ? "FOUND" : "MISSING");
                 GUI.Label(new Rect(px + 25, py + 288, 345, 104), evidence, new GUIStyle(smallStyle) { fontSize = 15 });
                 bool ready = world != null && world.Knows("code") &&
                     world.Knows("crew_dispatch") && world.Knows("protocol_card");
                 string deduction = world != null && world.Knows("deduction")
                     ? "DEDUCTION SOLVED: YOUR PAST ECHO IS THE SECOND OPERATOR."
                     : ready
-                      ? "WHO CAN ACTIVATE THE SEALED RELAY?\\n[1] WATCHER    [2] RECORDED OPERATOR\\n[3] MISSING TECHNICIAN"
-                      : "DEDUCTION LOCKED\\nRecover the shift report, crew dispatch and Echo protocol.";
+                      ? "WHO CAN ACTIVATE THE SEALED RELAY?\n[1] WATCHER    [2] RECORDED OPERATOR\n[3] MISSING TECHNICIAN"
+                      : "DEDUCTION LOCKED\nRecover the shift report, crew dispatch and Echo protocol.";
                 GUI.DrawTexture(new Rect(px + 23, py + 395, 354, 104), panelTexture);
                 GUI.Label(new Rect(px + 34, py + 403, 332, 93), deduction,
                     new GUIStyle(smallStyle) { fontSize = 14, wordWrap = true });
