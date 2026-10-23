@@ -43,6 +43,7 @@ namespace LastSignal
         private bool goingToB = true;
         private int observedLoop = -1;
         private float nextWarning;
+        private Renderer[] bodyVisuals;
 
         private bool HasClearPath(Vector3 destination)
         {
@@ -84,6 +85,7 @@ namespace LastSignal
         {
             transform.position = patrolA;
             if (warningEye != null) warningEye.enabled = false;
+            bodyVisuals = GetComponentsInChildren<Renderer>(true);
         }
 
         private void Update()
@@ -103,7 +105,11 @@ namespace LastSignal
                 preferredSide = 1;
             }
 
-            if (world.elapsed < activateAfterSeconds)
+            bool activeThreat = world.elapsed >= activateAfterSeconds;
+            if (bodyVisuals != null)
+                foreach (var visual in bodyVisuals)
+                    if (visual != null) visual.enabled = activeThreat && (visual.gameObject != gameObject || GetComponent<SignalWatcherPerformance>() == null);
+            if (!activeThreat)
             {
                 IsDistracted = false;
                 if (warningEye != null) warningEye.enabled = false;
