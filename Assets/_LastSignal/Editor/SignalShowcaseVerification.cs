@@ -8,6 +8,7 @@ public static class SignalShowcaseVerification
     [MenuItem("Last Signal/SHOWCASE - Verify Installed Scene")]
     public static void Verify()
     {
+        if (EditorApplication.isPlaying) { EditorUtility.DisplayDialog("LAST SIGNAL","Stop Play mode before checking the saved scene. Changes made during Play are not persisted.","OK"); return; }
         var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         var world = Object.FindFirstObjectByType<SignalWorld>();
         var ui = Object.FindFirstObjectByType<SignalInteractionUI>();
@@ -15,6 +16,7 @@ public static class SignalShowcaseVerification
         var makeover = GameObject.Find("SHOWCASE 2026 - CINEMATIC MAKEOVER");
         var story = GameObject.Find("Mystery and Suspense");
         var arena = GameObject.Find("Echo Escape Arena");
+        var landmarks=GameObject.Find("SHOWCASE - Building and Gate Detail");
         string summary =
             "Open scene: " + scene.name +
             "\nPlayable world: " + (world ? "INSTALLED" : "MISSING") +
