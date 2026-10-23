@@ -17,6 +17,7 @@ public static class SignalShowcaseMakeover
     [MenuItem("Last Signal/SHOWCASE - Apply Cinematic Makeover")]
     public static void Apply()
     {
+        if (EditorApplication.isPlaying) { EditorUtility.DisplayDialog("LAST SIGNAL","Stop Play mode before modifying your saved scene.","OK"); return; }
         Scene scene = SceneManager.GetActiveScene();
         if (scene.name != "Prototype")
         {
@@ -145,6 +146,7 @@ public static class SignalShowcaseMakeover
         GameObject letters = new GameObject(text + " lettering");
         letters.transform.SetParent(root,false);
         letters.transform.position = pos + new Vector3(0f,-.15f,.123f);
+        letters.transform.rotation = Quaternion.Euler(0f,180f,0f);
         var textMesh = letters.AddComponent<TextMesh>();
         textMesh.text = text;
         textMesh.fontSize = 48;
