@@ -97,7 +97,6 @@ public static class SignalShowcaseMakeover
         
         // Non-destructive global fog/color adjustment; original values are recorded
         // in the dedicated rollback command below.
-        Undo.RecordObject(RenderSettings.skybox, "Art direction skybox");
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Exponential;
         RenderSettings.fogColor = new Color(.035f,.065f,.085f);
