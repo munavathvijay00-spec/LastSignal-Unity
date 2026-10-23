@@ -68,16 +68,16 @@ namespace LastSignal
             SetTutorialPause(false);
         }
 
-        string CurrentObjective()
+        public string CurrentObjective()
         {
             if (!world) return "Find the work order near the tunnel.";
             if (chapterDirector != null && chapterDirector.chapter == 2)
                 return chapterDirector.stationSignalRecovered ? "CHAPTER 2: SEARCH THE CHECKPOINT FOR THE NEXT SIGNAL." : "CHAPTER 2: RECOVER THE RADIO STATION SIGNAL (E).";
-            if (!world.Knows("code")) return "STEP 1: Find the GOLD work order beside the road. Aim at it and press E.";
+            if (!world.Knows("code")) return "Investigate the maintenance report to learn what sealed the tunnel.";
             if (world.Knows("recording")) return "CHAPTER 1 COMPLETE: Find the BLUE transit beacon inside the tunnel to enter Chapter 2.";
             if (tunnelDoor != null && tunnelDoor.IsOpen) return "STEP 4: Gate open! Enter the tunnel, recover the PURPLE recording (E).";
-            if (world.loopNumber == 1) return "STEP 2: Stand on the PURPLE relay for 5 seconds, then press T. Your Echo replays that route.";
-            if (!world.Knows("recording")) return "STEP 3: Walk to the gate in loop 2. The BLUE Echo charges it for 14 seconds. Aim at the gate and press E.";
+            if (world.loopNumber == 1) return "Record a path across the relay, then rewind to let your Echo replay it.";
+            if (!world.Knows("recording")) return "Let your Echo charge the relay; open the gate before the signal fades.";
             return "STEP 4: Follow the tunnel. Decode the transmitter or reach the escape tower.";
         }
 
@@ -137,10 +137,8 @@ namespace LastSignal
             }
             else
             {
-                GUI.DrawTexture(new Rect(w / 2 - 300, h - 105, 600, 47), backdrop);
-                GUI.Label(new Rect(w / 2 - 285, h - 100, 575, 43), CurrentObjective(), hint);
-                GUI.Label(new Rect(w - 170, h - 43, 160, 26), "H  =  HELP", hint);
-                DrawTarget(CurrentTarget(), w, h, scale);
+                // Objective is rendered once by SignalInteractionUI, not again over the interaction prompt.
+                if (!Input.GetKey(KeyCode.Tab)) DrawTarget(CurrentTarget(), w, h, scale);
             }
             GUI.matrix = oldMatrix;
         }
