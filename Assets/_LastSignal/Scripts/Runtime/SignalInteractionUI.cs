@@ -102,45 +102,10 @@ namespace LastSignal
 
             if (phoneOpen && world != null && !world.Knows("deduction"))
             {
-                int index = Input.GetKeyDown(KeyCode.Alpha1) ? 1 :
+                int choice = Input.GetKeyDown(KeyCode.Alpha1) ? 1 :
                     Input.GetKeyDown(KeyCode.Alpha2) ? 2 :
                     Input.GetKeyDown(KeyCode.Alpha3) ? 3 : 0;
-                if (index > 0)
-                {
-                    string id = index == 1 ? "code" : index == 2 ? "crew_dispatch" : "protocol_card";
-                    if (!world.Knows(id))
-                        linkFeedback = "EVIDENCE MISSING. Explore the road and tunnel approach.";
-                    else if (selectedEvidence == 0)
-                    {
-                        selectedEvidence = index;
-                        linkFeedback = "Record " + index + " selected. Choose a second record.";
-                    }
-                    else
-                    {
-                        if (selectedEvidence == index)
-                        {
-                            linkFeedback = "Select a DIFFERENT record to form a connection.";
-                            selectedEvidence = 0;
-                            return;
-                        }
-                        int lo = Mathf.Min(selectedEvidence, index);
-                        int hi = Mathf.Max(selectedEvidence, index);
-                        if (lo == 1 && hi == 2)
-                        {
-                            signatureLink = true;
-                            linkFeedback = "LINK VERIFIED: duplicate signature and impossible crew count.";
-                        }
-                        else if (lo == 2 && hi == 3)
-                        {
-                            protocolLink = true;
-                            linkFeedback = "LINK VERIFIED: second operator was a recorded Echo.";
-                        }
-                        else linkFeedback = "NO DIRECT LINK: These records lack a common event.";
-                        selectedEvidence = 0;
-                        if (signatureLink && protocolLink)
-                            world.Discover("deduction", "CASE SOLVED: The missing second operator was your recorded Echo. The gate will recognize it.");
-                    }
-                }
+                if (choice != 0) LinkEvidence(choice);
                 if (Input.GetKeyDown(KeyCode.Backspace))
                 {
                     selectedEvidence = 0;
@@ -168,6 +133,45 @@ namespace LastSignal
                 lastStatus = world.status;
                 notificationUntil = Time.time + 5f;
             }
+        }
+
+        private void LinkEvidence(int index)
+        {
+            if (world == null || world.Knows("deduction") || index < 1 || index > 3) return;
+            string id = index == 1 ? "code" : index == 2 ? "crew_dispatch" : "protocol_card";
+            if (!world.Knows(id))
+            {
+                linkFeedback = "EVIDENCE MISSING. Find this record first.";
+                return;
+            }
+            if (selectedEvidence == 0)
+            {
+                selectedEvidence = index;
+                linkFeedback = "Record " + index + " selected. Choose another record.";
+                return;
+            }
+            if (selectedEvidence == index)
+            {
+                selectedEvidence = 0;
+                linkFeedback = "Choose two DIFFERENT records.";
+                return;
+            }
+            int lo = Mathf.Min(selectedEvidence, index);
+            int hi = Mathf.Max(selectedEvidence, index);
+            selectedEvidence = 0;
+            if (lo == 1 && hi == 2)
+            {
+                signatureLink = true;
+                linkFeedback = "LINK VERIFIED: duplicated signature and crew-count discrepancy.";
+            }
+            else if (lo == 2 && hi == 3)
+            {
+                protocolLink = true;
+                linkFeedback = "LINK VERIFIED: the second operator is your recorded Echo.";
+            }
+            else linkFeedback = "NO CONNECTION: compare a different pair.";
+            if (signatureLink && protocolLink)
+                world.Discover("deduction", "CASE SOLVED: Your recorded Echo is the missing second operator.");
         }
 
         private bool LookAt(out SignalInteractable target)
@@ -293,16 +297,21 @@ namespace LastSignal
                 GUI.Label(new Rect(px + 25, py + 288, 345, 104), evidence, new GUIStyle(smallStyle) { fontSize = 15 });
                 bool ready = world != null && world.Knows("code") &&
                     world.Knows("crew_dispatch") && world.Knows("protocol_card");
-                string deduction = world != null && world.Knows("deduction")
-                    ? "CASE SOLVED / RECORDED ECHO IS SECOND OPERATOR"
-                    : "SELECT TWO RECORDS USING KEYS 1 / 2 / 3" +
-                      "\nMATCH TWO RECORDS: " +
-                      (signatureLink ? "SIGNATURE [OK]" : "SIGNATURE [ ]") +
-                      "  " + (protocolLink ? "ECHO [OK]" : "ECHO [ ]") +
-                      "\n" + linkFeedback;
                 GUI.DrawTexture(new Rect(px + 23, py + 395, 354, 104), panelTexture);
-                GUI.Label(new Rect(px + 34, py + 403, 332, 93), deduction,
-                    new GUIStyle(smallStyle) { fontSize = 13, wordWrap = true });
+                var cardStyle = new GUIStyle(GUI.skin.button) { fontSize = 12 };
+                if (world != null && !world.Knows("deduction"))
+                {
+                    if (GUI.Button(new Rect(px + 31, py + 401, 103, 27), "1 SHIFT", cardStyle)) LinkEvidence(1);
+                    if (GUI.Button(new Rect(px + 141, py + 401, 103, 27), "2 DISPATCH", cardStyle)) LinkEvidence(2);
+                    if (GUI.Button(new Rect(px + 251, py + 401, 116, 27), "3 PROTOCOL", cardStyle)) LinkEvidence(3);
+                }
+                string deduction = world != null && world.Knows("deduction")
+                    ? "CASE SOLVED: RECORDED ECHO IS SECOND OPERATOR"
+                    : "CONNECT TWO CLUES (CLICK OR PRESS KEYS)\n" +
+                      (signatureLink ? "SIGNATURE: LINKED" : "SIGNATURE: MISSING") + "    " +
+                      (protocolLink ? "ECHO: LINKED" : "ECHO: MISSING") + "\n" + linkFeedback;
+                GUI.Label(new Rect(px + 33, py + 434, 334, 64), deduction,
+                    new GUIStyle(smallStyle) { fontSize = 12, wordWrap = true });
                 CenterLabel(new Rect(px + 25, py + 510, 350, 42), "TAB  —  CLOSE PHONE", promptStyle);
             }
             GUI.matrix = previousMatrix;
