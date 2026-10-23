@@ -28,6 +28,8 @@ public static class SignalMysteryPassBuilder
         MakeClue(root.transform, "Emergency protocol card", new Vector3(-5.75f,1f,25.2f),
             "Inspect emergency protocol", "protocol_card",
             "PROTOCOL 0471: An Echo repeats movements, not choices. Only the recorded operator can activate the gate.");
+        var gate = UnityEngine.Object.FindFirstObjectByType<SignalDoor>();
+        if (gate) { Undo.RecordObject(gate,"Require deduction at gate"); gate.requiredClue="deduction"; }
         MakeClue(root.transform, "Corrupted radio log", new Vector3(5.8f,1f,32.5f),
             "Decode the radio log", "radio_log",
             "RADIO 11:47: Control, the voice calling is yours. Transmission originated behind the sealed gate.");
