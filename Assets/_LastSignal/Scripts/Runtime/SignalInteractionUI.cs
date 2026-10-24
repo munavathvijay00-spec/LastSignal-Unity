@@ -189,6 +189,28 @@ namespace LastSignal
                 world.Discover("deduction", "CASE SOLVED: Your recorded Echo is the missing second operator.");
         }
 
+        private string InteractionLabel(SignalInteractable target)
+        {
+            var gate = target as SignalDoor;
+            if (gate == null) return target.prompt;
+            if (gate.IsOpen) return "Gate already open";
+            if (world != null && !string.IsNullOrEmpty(gate.requiredClue) &&
+                !world.Knows(gate.requiredClue))
+            {
+                if (gate.requiredClue == "deduction")
+                {
+                    if (!world.Knows("code")) return "LOCKED: Find shift report";
+                    if (!world.Knows("crew_dispatch")) return "LOCKED: Find crew dispatch";
+                    if (!world.Knows("protocol_card")) return "LOCKED: Find Echo protocol";
+                    return "LOCKED: Solve evidence links on phone";
+                }
+                return "LOCKED: Required evidence missing";
+            }
+            if (gate.requireEcho && gate.RemainingWindow <= 0f)
+                return "LOCKED: Charge relay with recorded Echo";
+            return "OPEN GATE NOW";
+        }
+
         private bool LookAt(out SignalInteractable target)
         {
             target = null;
@@ -278,7 +300,7 @@ namespace LastSignal
                 {
                     GUI.DrawTexture(new Rect(w / 2f - 210, h - 130, 420, 50), panelTexture);
                     CenterLabel(new Rect(w / 2f - 205, h - 129, 410, 46),
-                        "[ E ]    " + target.prompt, promptStyle);
+                        "[ E ]    " + InteractionLabel(target), promptStyle);
                 }
                 GUI.DrawTexture(new Rect(22, h - 53, 594, 33), panelTexture);
                 GUI.Label(new Rect(35, h - 52, 580, 30),
