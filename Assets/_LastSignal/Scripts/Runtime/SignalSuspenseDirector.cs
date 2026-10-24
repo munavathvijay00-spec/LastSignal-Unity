@@ -18,6 +18,8 @@ namespace LastSignal
         private Texture2D panel;
         private AudioSource audioSource;
         private AudioClip hiss;
+        private Light[] sceneLights;
+        private float[] lightRest;
 
         void Start()
         {
@@ -25,6 +27,11 @@ namespace LastSignal
             if (!guide) guide = FindFirstObjectByType<SignalGuide>();
             if (!interfaceUI) interfaceUI = FindFirstObjectByType<SignalInteractionUI>();
             loop = world ? world.loopNumber : 1;
+            sceneLights = disturbedLights != null && disturbedLights.Length > 0
+                ? disturbedLights : FindObjectsByType<Light>(FindObjectsSortMode.None);
+            lightRest = new float[sceneLights.Length];
+            for (int j = 0; j < sceneLights.Length; j++)
+                lightRest[j] = sceneLights[j] ? sceneLights[j].intensity : 0f;
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
@@ -58,17 +65,25 @@ namespace LastSignal
                 phoneBeat = outageBeat = shadowBeat = false;
                 until = 0f;
             }
+            // A brief real-world lighting disturbance, not merely an HUD message.
+            bool blackout = world.elapsed > 43f && world.elapsed < 47f;
+            if (sceneLights != null)
+                for (int j = 0; j < sceneLights.Length; j++)
+                    if (sceneLights[j] && sceneLights[j].type != LightType.Directional)
+                        sceneLights[j].intensity = blackout
+                            ? (Mathf.Sin(Time.time * 21f + j * 2f) > 0.38f ? lightRest[j] * .22f : .02f)
+                            : lightRest[j];
             if (world.elapsed > 12f && !phoneBeat)
             {
                 phoneBeat = true;
                 Notify("INCOMING CALL / UNKNOWN", "If you see yourself on the road, do not answer.");
             }
-            if (world.elapsed > 38f && !outageBeat)
+            if (world.elapsed > 43f && !outageBeat)
             {
                 outageBeat = true;
                 Notify("POWER FAILURE / 11:47 PM", "The emergency lights stopped at the same time as last night.");
             }
-            if (world.elapsed > 56f && !shadowBeat)
+            if (world.elapsed > 63f && !shadowBeat)
             {
                 shadowBeat = true;
                 Notify("MOVEMENT DETECTED", "Something shifted beyond the road. Keep your light low.");
@@ -76,7 +91,7 @@ namespace LastSignal
             if (!discoveryBeat && world.Knows("recording"))
             {
                 discoveryBeat = true;
-                Notify("TRANSMISSION RECOVERED", "The warning was recorded in your own voice.");
+                Notify("RECORDING 0471 / PLAYBACK", "I sent you the warning. I am you. Whatever follows our Echo never forgets.");
             }
         }
 
@@ -112,6 +127,9 @@ namespace LastSignal
 
         void OnDestroy()
         {
+            if (sceneLights != null && lightRest != null)
+                for (int j=0;j<sceneLights.Length;j++)
+                    if(sceneLights[j]) sceneLights[j].intensity=lightRest[j];
             if (hiss) Destroy(hiss);
             if (panel) Destroy(panel);
         }
