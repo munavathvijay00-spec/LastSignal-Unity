@@ -11,6 +11,7 @@ namespace LastSignal
     {
         public SignalWorld world;
         public SignalProgression progression;
+        public SignalDoor tunnelGate;
         public Transform stationArrival;
         public int chapter { get; private set; } = 1;
         public bool stationSignalRecovered { get; private set; }
@@ -25,12 +26,14 @@ namespace LastSignal
         {
             if (!world) world = FindFirstObjectByType<SignalWorld>();
             if (!progression) progression = FindFirstObjectByType<SignalProgression>();
+            if (!tunnelGate) tunnelGate = FindFirstObjectByType<SignalDoor>();
             previousLoop = world != null ? world.loopNumber : 1;
         }
 
         public bool CanStartChapter2()
         {
             return world != null && world.Knows("recording") &&
+                   (tunnelGate == null || tunnelGate.IsOpen) &&
                    stationArrival != null && world.player != null && !world.ended;
         }
 
@@ -40,7 +43,7 @@ namespace LastSignal
             {
                 if (world != null) world.status = chapter > 1 ?
                     "THE RADIO STATION IS ALREADY YOUR CURRENT CHAPTER." :
-                    "RECOVER YOUR VOICE RECORDING INSIDE THE TUNNEL FIRST.";
+                    "OPEN THE TUNNEL GATE AND RECOVER THE VOICE RECORDING FIRST.";
                 return;
             }
 
