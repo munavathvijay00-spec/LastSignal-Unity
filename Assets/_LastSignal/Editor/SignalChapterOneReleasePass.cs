@@ -71,9 +71,11 @@ public static class SignalChapterOneReleasePass
             RaycastHit hit;
             if (Physics.Raycast(at + Vector3.up * 20f, Vector3.down, out hit, 40f,
                 ~0, QueryTriggerInteraction.Ignore) &&
-                hit.collider.gameObject==ground)
+                ground != null && hit.collider.gameObject==ground)
                 at.y=hit.point.y + .8f;
             prop.transform.position=at;
+            var art=GameObject.Find(names[i]+" / evidence presentation");
+            if(art) { Undo.RecordObject(art.transform,"Move evidence visual with clue"); art.transform.position=at; }
             Collider collider=prop.GetComponent<Collider>();
             if (collider) { Undo.RecordObject(collider, "Enable evidence interaction"); collider.enabled=true; }
         }
