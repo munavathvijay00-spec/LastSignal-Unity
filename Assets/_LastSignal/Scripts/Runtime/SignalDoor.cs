@@ -11,7 +11,7 @@ namespace LastSignal
         public string requiredClue = "code";
         public SignalEchoPlate echoPlate;
         public bool requireEcho;
-        [Min(2f)] public float activationWindowSeconds = 14f;
+        [Min(2f)] public float activationWindowSeconds = 35f;
 
         public bool IsOpen { get { return opened; } }
         public bool EverOpened { get; private set; }
@@ -52,7 +52,10 @@ namespace LastSignal
             if (!string.IsNullOrEmpty(requiredClue) && !world.Knows(requiredClue))
             {
                 world.status = requiredClue == "deduction" ?
-                    "GATE LOCKED: OPEN PHONE (TAB), CONNECT SHIFT REPORT + DISPATCH + ECHO PROTOCOL." :
+                    (!world.Knows("code") ? "GATE LOCKED: READ THE NIGHT-SHIFT REPORT FIRST." :
+                     !world.Knows("crew_dispatch") ? "GATE LOCKED: FIND THE MISSING CREW DISPATCH." :
+                     !world.Knows("protocol_card") ? "GATE LOCKED: FIND THE EMERGENCY ECHO PROTOCOL." :
+                     "GATE LOCKED: OPEN PHONE (TAB), CONNECT SHIFT+DISPATCH AND DISPATCH+PROTOCOL.") :
                     "GATE LOCKED. FIND THE GOLD WORK ORDER AND PRESS E.";
                 return;
             }
