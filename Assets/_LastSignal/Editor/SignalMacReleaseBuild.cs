@@ -24,7 +24,7 @@ public static class SignalMacReleaseBuild
             EditorUtility.DisplayDialog("LAST SIGNAL", "Open and save the existing Prototype scene first.", "OK");
             return;
         }
-        if (EditorUtility.IsDirty(scene))
+        if (scene.isDirty)
         {
             EditorUtility.DisplayDialog("LAST SIGNAL", "Save the scene (Command+S) before building.", "OK");
             return;
