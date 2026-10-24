@@ -55,10 +55,18 @@ public static class SignalSceneHealthCheck
             {
                 var evidence=GameObject.Find(evidenceNames[i]);
                 var clue=evidence?evidence.GetComponent<SignalClue>():null;
-                if(clue==null || clue.clueId!=evidenceIds[i] || evidence.GetComponent<Collider>()==null)
+                if(clue==null || clue.clueId!=evidenceIds[i] || evidence.GetComponent<Collider>()==null || !evidence.GetComponent<Collider>().enabled)
                 {
                     Debug.LogError("[LAST SIGNAL QA] Deduction evidence missing, has incorrect clue ID or lacks a collider: "+evidenceNames[i]);
                     fail++;
+                }
+                else
+                {
+                    Vector3 p=evidence.transform.position;
+                    if(Mathf.Abs(p.x)>6f || p.z < -4f || p.z > 36f || p.y < .1f)
+                    {
+                        Debug.LogWarning("[LAST SIGNAL QA] Evidence is outside the intended road investigation corridor: "+evidenceNames[i]+" at "+p);
+                    }
                 }
             }
             if(Object.FindFirstObjectByType<SignalInteractionUI>()==null)
@@ -79,6 +87,9 @@ public static class SignalSceneHealthCheck
            Object.FindFirstObjectByType<SignalSuspenseDirector>()==null)
             Debug.LogWarning("[LAST SIGNAL QA] Mystery root exists but suspense sequence is absent");
 
+        var transit=Object.FindFirstObjectByType<SignalChapterDirector>();
+        if(transit!=null && transit.tunnelGate==null)
+            Debug.LogWarning("[LAST SIGNAL QA] Chapter transit gate reference is not serialized. Runtime fallback must succeed.");
         var stalker=Object.FindFirstObjectByType<SignalStalker>();
         if(stalker==null) Debug.LogWarning("[LAST SIGNAL QA] Watcher missing: stealth encounter cannot be tested");
         else
