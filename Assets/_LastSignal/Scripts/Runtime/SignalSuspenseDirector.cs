@@ -20,6 +20,7 @@ namespace LastSignal
         private AudioClip hiss;
         private Light[] sceneLights;
         private float[] lightRest;
+        private bool wasBlackout;
 
         void Start()
         {
@@ -67,12 +68,25 @@ namespace LastSignal
             }
             // A brief real-world lighting disturbance, not merely an HUD message.
             bool blackout = world.elapsed > 43f && world.elapsed < 47f;
-            if (sceneLights != null)
-                for (int j = 0; j < sceneLights.Length; j++)
-                    if (sceneLights[j] && sceneLights[j].type != LightType.Directional)
-                        sceneLights[j].intensity = blackout
-                            ? (Mathf.Sin(Time.time * 21f + j * 2f) > 0.38f ? lightRest[j] * .22f : .02f)
-                            : lightRest[j];
+            if (blackout && !wasBlackout)
+            {
+                for(int j=0;j<sceneLights.Length;j++)
+                    lightRest[j]=sceneLights[j] ? sceneLights[j].intensity : 0f;
+            }
+            if (blackout)
+            {
+                for (int j=0;j<sceneLights.Length;j++)
+                    if(sceneLights[j] && sceneLights[j].type!=LightType.Directional)
+                        sceneLights[j].intensity=
+                            Mathf.Sin(Time.time*21f+j*2f)>.38f ? lightRest[j]*.22f : .02f;
+            }
+            else if (wasBlackout)
+            {
+                for (int j=0;j<sceneLights.Length;j++)
+                    if(sceneLights[j] && sceneLights[j].type!=LightType.Directional)
+                        sceneLights[j].intensity=lightRest[j];
+            }
+            wasBlackout=blackout;
             if (world.elapsed > 12f && !phoneBeat)
             {
                 phoneBeat = true;
@@ -129,7 +143,8 @@ namespace LastSignal
         {
             if (sceneLights != null && lightRest != null)
                 for (int j=0;j<sceneLights.Length;j++)
-                    if(sceneLights[j]) sceneLights[j].intensity=lightRest[j];
+                    if(sceneLights[j] && wasBlackout && sceneLights[j].type!=LightType.Directional)
+                        sceneLights[j].intensity=lightRest[j];
             if (hiss) Destroy(hiss);
             if (panel) Destroy(panel);
         }
