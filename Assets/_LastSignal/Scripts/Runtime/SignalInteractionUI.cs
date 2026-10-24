@@ -10,6 +10,7 @@ namespace LastSignal
         public float range = 3.5f;
 
         private bool phoneOpen;
+        private bool showDiagnosis;
         private bool inspecting;
         private float inspectionPreviousTimeScale = 1f;
         private string inspectionTitle = "";
@@ -91,6 +92,7 @@ namespace LastSignal
                 }
                 return;
             }
+            if (Input.GetKeyDown(KeyCode.F9)) showDiagnosis = !showDiagnosis;
             if (Input.GetKeyDown(KeyCode.T) && world != null && world.loopNumber == 1)
                 world.ResetLoop();
 
@@ -303,6 +305,25 @@ namespace LastSignal
                     "GATE CHARGED   " + Mathf.CeilToInt(temporalGate.RemainingWindow) +
                     (world != null && !string.IsNullOrEmpty(temporalGate.requiredClue) && !world.Knows(temporalGate.requiredClue)
                     ? "s   •   EVIDENCE REQUIRED" : "s   →   OPEN THE GATE"), chargedStyle);
+            }
+
+            if (!phoneOpen && showDiagnosis && world != null)
+            {
+                var infoStyle = new GUIStyle(smallStyle) { fontSize = 15, wordWrap = true };
+                string diagnostic =
+                    "CHAPTER 1 / LIVE DIAGNOSTIC (F9 to hide)\n" +
+                    "Report: " + (world.Knows("code") ? "FOUND" : "MISSING") +
+                    "   Dispatch: " + (world.Knows("crew_dispatch") ? "FOUND" : "MISSING") +
+                    "   Protocol: " + (world.Knows("protocol_card") ? "FOUND" : "MISSING") +
+                    "\nEvidence linked: " + (world.Knows("deduction") ? "YES" : "NO") +
+                    "   Gate: " + (temporalGate != null && temporalGate.IsOpen ? "OPEN" : "CLOSED") +
+                    "\nEcho relay: " + (temporalGate != null && temporalGate.echoPlate != null &&
+                        temporalGate.echoPlate.active ? "ACTIVE" : "INACTIVE") +
+                    "   Charge left: " + (temporalGate != null ? temporalGate.RemainingWindow.ToString("F1") : "N/A") +
+                    "\nRecording: " + (world.Knows("recording") ? "FOUND" : "MISSING") +
+                    "   Loop: " + world.loopNumber;
+                GUI.DrawTexture(new Rect(22, 145, 600, 132), panelTexture);
+                GUI.Label(new Rect(35, 150, 575, 124), diagnostic, infoStyle);
             }
 
             if (!phoneOpen)
