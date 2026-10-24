@@ -215,11 +215,25 @@ namespace LastSignal
         {
             target = null;
             if (playerCamera == null) return false;
-            RaycastHit hit;
-            if (!Physics.Raycast(playerCamera.transform.position,
-                playerCamera.transform.forward, out hit, range)) return false;
-            target = hit.collider.GetComponentInParent<SignalInteractable>();
-            return target != null;
+            Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+            // Ignore trigger volumes and player's own collider. Sort distance so
+            // interactive props work when their own art has several mesh components.
+            RaycastHit[] hits = Physics.RaycastAll(ray, range, ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in hits)
+            {
+                if (hit.collider.GetComponentInParent<SignalPlayer>() != null) continue;
+                var found = hit.collider.GetComponentInParent<SignalInteractable>();
+                if (found != null && found.isActiveAndEnabled)
+                {
+                    target = found;
+                    return true;
+                }
+                // A solid unrelated wall blocks interaction; never interact through walls.
+                if (hit.collider is TerrainCollider || hit.collider.GetComponent<Renderer>() != null)
+                    return false;
+            }
+            return false;
         }
 
         private void OnGUI()
